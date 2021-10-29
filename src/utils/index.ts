@@ -16,6 +16,8 @@ import {
 } from "@tensorflow/tfjs";
 import { MutableRefObject } from "react";
 import { AnnotationShape, Stage } from "react-mindee-js";
+import { VOCAB } from "src/common/constants";
+
 export const loadRecognitionModel = async ({
   recognitionModel,
 }: {
@@ -130,8 +132,6 @@ export const extractWordsFromCrop = async ({
   // @ts-ignore
   let probabilities = softmax(predictions, -1);
   let bestPath = [argMax(probabilities, -1)];
-  let vocab =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~°àâéèêëîïôùûçÀÂÉÈËÎÏÔÙÛÇ£€¥¢฿";
   let blank = 123;
   var words = [];
   for (const sequence of bestPath) {
@@ -143,7 +143,7 @@ export const extractWordsFromCrop = async ({
       if (k === blank) {
         added = false;
       } else if (k !== blank && added === false) {
-        collapsed += vocab[k];
+        collapsed += VOCAB[k];
         added = true;
       }
     }
@@ -186,10 +186,11 @@ function clamp(number: number) {
 }
 
 export const transformBoundingBox = (contour: any) => {
-  const p1 = clamp(contour.x - contour.width / 4);
-  const p2 = clamp(p1 + 1.5 * contour.width);
-  const p3 = clamp(contour.y - contour.height / 4);
-  const p4 = clamp(p3 + 1.5 * contour.height);
+  let offset = contour.width * contour.height * 1.5 / (2 * (contour.width + contour.height))
+  const p1 = clamp(contour.x - offset);
+  const p2 = clamp(p1 + contour.width + 2 * offset);
+  const p3 = clamp(contour.y - offset);
+  const p4 = clamp(p3 + contour.height + 2 * offset);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     coordinates: [
@@ -205,6 +206,7 @@ export const extractBoundingBoxesFromHeatmap = () => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);
+  cv.morphologyEx(src, src, cv.MORPH_OPEN, cv.Mat.ones(2, 2, cv.CV_8U));
   let contours = new cv.MatVector();
   let hierarchy = new cv.Mat();
   // You can try more different parameters
@@ -212,7 +214,7 @@ export const extractBoundingBoxesFromHeatmap = () => {
     src,
     contours,
     hierarchy,
-    cv.RETR_CCOMP,
+    cv.RETR_EXTERNAL,
     cv.CHAIN_APPROX_SIMPLE
   );
   // draw contours with random Scalar
