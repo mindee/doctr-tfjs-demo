@@ -206,7 +206,7 @@ export const extractBoundingBoxesFromHeatmap = () => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);
-  cv.morphologyEx(src, src, cv.MORPH_OPEN, cv.Mat.ones(3, 3, cv.CV_8U));
+  cv.morphologyEx(src, src, cv.MORPH_OPEN, cv.Mat.ones(2, 2, cv.CV_8U));
   let contours = new cv.MatVector();
   let hierarchy = new cv.Mat();
   // You can try more different parameters
