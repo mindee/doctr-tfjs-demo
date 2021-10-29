@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Grid, makeStyles, Theme } from "@material-ui/core";
+import Sidebar from "./components/Sidebar";
+import VisionWrapper from "./components/VisionWrapper";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  wrapper: {
+    height: "100vh",
+    width: "100%",
+    background: theme.palette.grey[50],
+  },
+}));
 
 function App() {
+  const classes = useStyles();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grid className={classes.wrapper} container spacing={2}>
+      <Grid item xs={3}>
+        <Sidebar />
+      </Grid>
+      <Grid item xs={9}>
+        <VisionWrapper />
+      </Grid>
+    </Grid>
   );
 }
 
