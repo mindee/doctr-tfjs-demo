@@ -1,4 +1,5 @@
 import { Box, makeStyles, Theme } from "@material-ui/core";
+import { Card } from "@mindee/web-elements.ui.card";
 import {
   AnnotationData,
   AnnotationViewer as AnnotationViewerBase,
@@ -8,9 +9,7 @@ const COMPONENT_ID = "AnnotationViewer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    border: `1px solid ${theme.palette.grey[300]}`,
-    borderRadius: 8,
-    background: "white",
+    height: "45vh",
   },
   image: {
     height: "100%",
@@ -29,19 +28,16 @@ export default function AnnotationViewer({
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Box
-      height="45vh"
-      display="flex"
-      flexDirection="column"
-      p={1}
+    <Card
+      header="Annotation viewer"
       id={COMPONENT_ID}
       className={classes.wrapper}
     >
       <AnnotationViewerBase
         data={annotationData}
         getStage={setAnnotationStage}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "35vh", width: "100%", background: "white" }}
       />
-    </Box>
+    </Card>
   );
 }
