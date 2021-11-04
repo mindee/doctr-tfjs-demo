@@ -2,10 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { ThemeWrapper } from "@mindee/web-elements.ui.theme-wrapper";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeWrapper>
+      <App />
+    </ThemeWrapper>
   </React.StrictMode>,
   document.getElementById("root")
 );

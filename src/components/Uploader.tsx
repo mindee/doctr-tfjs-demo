@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { CSSProperties, ReactNode } from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { UploadedFile } from "../common/types";
@@ -12,11 +12,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
+  style: CSSProperties;
   children: ReactNode;
   onUpload: (file: UploadedFile) => void;
 }
 
-export default function Uploader({ children, onUpload }: Props): JSX.Element {
+export default function Uploader({
+  children,
+  onUpload,
+  style,
+}: Props): JSX.Element {
   const classes = useStyles();
   const onDrop = (acceptedFiles: File[]) => {
     acceptedFiles.forEach((acceptedFile) => {
@@ -38,6 +43,7 @@ export default function Uploader({ children, onUpload }: Props): JSX.Element {
       width="100%"
       className={classes.wrapper}
       display="flex"
+      style={style}
       {...getRootProps()}
     >
       <input {...getInputProps()} />

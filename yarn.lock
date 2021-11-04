@@ -1194,6 +1194,20 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.36"
 
+"@fortawesome/free-regular-svg-icons@^5.15.4":
+  version "5.15.4"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.15.4.tgz#b97edab436954333bbeac09cfc40c6a951081a02"
+  integrity sha512-9VNNnU3CXHy9XednJ3wzQp6SwNwT3XaM26oS4Rp391GsxVYA+0oDR2J194YCIWf7jNRCYKjUCOduxdceLrx+xw==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.36"
+
+"@fortawesome/free-solid-svg-icons@^5.15.4":
+  version "5.15.4"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.15.4.tgz#2a68f3fc3ddda12e52645654142b9e4e8fbb6cc5"
+  integrity sha512-JLmQfz6tdtwxoihXLg6lT78BorrFyCf59SAwBM6qV/0zXyVeDygJVb3fk+j5Qat+Yvcxp1buLTY5iDh1ZSAQ8w==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.36"
+
 "@fortawesome/react-fontawesome@^0.1.15":
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/@fortawesome/react-fontawesome/-/react-fontawesome-0.1.15.tgz#1450b838f905981d721bf07e14e3b52c0e9a91ed"
@@ -1494,6 +1508,29 @@
     "@babel/runtime" "^7.4.4"
     prop-types "^15.7.2"
     react-is "^16.8.0 || ^17.0.0"
+
+"@mindee/web-elements.assets@0.0.22":
+  version "0.0.22"
+  resolved "https://node.bit.dev/@mindee/web-elements.assets/-/@mindee-web-elements.assets-0.0.22.tgz#3564c8e16fe36a46f0a261bb5525b25dfe743846"
+  integrity sha1-NWTI4W/jakbwomG7VSWyXf50OEY=
+  dependencies:
+    core-js "^3.0.0"
+
+"@mindee/web-elements.ui.card@^0.0.16":
+  version "0.0.16"
+  resolved "https://node.bit.dev/@mindee/web-elements.ui.card/-/@mindee-web-elements.ui.card-0.0.16.tgz#b3e8a9a1fb16f51ce107620c4c316a739445eca1"
+  integrity sha1-s+ipofsW9RzhB2IMTDFqc5RF7KE=
+  dependencies:
+    classnames "2.3.1"
+    core-js "^3.0.0"
+
+"@mindee/web-elements.ui.theme-wrapper@^0.0.21":
+  version "0.0.21"
+  resolved "https://node.bit.dev/@mindee/web-elements.ui.theme-wrapper/-/@mindee-web-elements.ui.theme-wrapper-0.0.21.tgz#faf507b505dfd421af1234b89d0ed29aaff39f2f"
+  integrity sha1-+vUHtQXf1CGvEjS4nQ7Smq/zny8=
+  dependencies:
+    "@mindee/web-elements.assets" "0.0.22"
+    core-js "^3.0.0"
 
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
@@ -3498,6 +3535,11 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
+classnames@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
+  integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
+
 clean-css@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.2.3.tgz#507b5de7d97b48ee53d84adb0160ff6216380f78"
@@ -3786,6 +3828,11 @@ core-js@^2.4.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+
+core-js@^3.0.0:
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.19.1.tgz#f6f173cae23e73a7d88fa23b6e9da329276c6641"
+  integrity sha512-Tnc7E9iKd/b/ff7GFbhwPVzJzPztGrChB8X8GLqoYGdEOG8IpLnK1xPyo3ZoO3HsK6TodJS58VGPOxA+hLHQMg==
 
 core-js@^3.6.5:
   version "3.9.0"

@@ -2,18 +2,29 @@ import React from "react";
 import {
   Box,
   CircularProgress,
+  Grid,
   makeStyles,
   Theme,
   Typography,
 } from "@material-ui/core";
+import { Card } from "@mindee/web-elements.ui.card";
 
 const COMPONENT_ID = "WordsList";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    border: `1px solid ${theme.palette.grey[300]}`,
-    borderRadius: 8,
-    background: "white",
+    height: "45vh",
+  },
+  list: {
+    overflow: "hidden auto",
+    height: "35vh",
+  },
+  item: {
+    padding: 20,
+    borderBottom: `1px solid ${theme.palette.grey[100]}`,
+  },
+  loader: {
+    margin: "auto",
   },
 }));
 
@@ -27,20 +38,18 @@ export default function WordsList({
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Box
-      height="45vh"
-      display="flex"
-      flexDirection="column"
-      p={1}
-      overflow="hidden auto"
-      id={COMPONENT_ID}
-      className={classes.wrapper}
-    >
-      {extractingWords ? (
-        <CircularProgress />
-      ) : (
-        words.map((word, key) => <Typography key={key}>{word}</Typography>)
-      )}
-    </Box>
+    <Card header="Words" id={COMPONENT_ID} className={classes.wrapper}>
+      <Grid container id={COMPONENT_ID} className={classes.list}>
+        {extractingWords ? (
+          <CircularProgress className={classes.loader} />
+        ) : (
+          words.map((word, key) => (
+            <Grid className={classes.item} key={key} item xs={12}>
+              <Typography key={key}>{word}</Typography>
+            </Grid>
+          ))
+        )}
+      </Grid>
+    </Card>
   );
 }
