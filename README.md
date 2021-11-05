@@ -1,8 +1,32 @@
-# Getting Started with Create React App
+# Doctr Tensorflow.js demo
+
+This project is based on [Doctr](https://github.com/mindee/doctr).
+It provides a end-to-end OCR built and trained with doctr, deployed with Tensorflow.js.
+
+You can choose between 2 detection models:
+- `db_resnet50`, high-resolution (heavier but stronger)
+- `db_mobilenet_v2`, medium-resolution, (lighter if your computer can't deal with the heavier backbone)
+
+The recognition model is the `crnn_vgg16_bn`.
+
+All documentation about models can be found [here](https://mindee.github.io/doctr/models.html).
+
+Models were loaded and trained with doctr, then converted to Tensorflow.js savedmodels format
+with the `tensorflowjs_converter`.
+
+The segmentation postprocessing is performed with OpenCV.js
+
+
+### Use the interface
+
+You need to upload an image (top-left window), and it will automatically run the OCR on the document.
+The segmentation heatmap will be displayed on the top-right window, the word-level boxes will be diplayed
+on the bottom-left window and the words will be displayed on the bottom-right window.
+ 
+
+## Getting started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
 
 In the project directory, you can run:
 
