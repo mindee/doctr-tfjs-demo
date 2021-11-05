@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
+import { Word } from "src/common/types";
 
 const COMPONENT_ID = "WordsList";
 
@@ -20,8 +21,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "35vh",
   },
   item: {
-    padding: 20,
+    cursor: "pointer",
+    padding: 5,
     borderBottom: `1px solid ${theme.palette.grey[100]}`,
+    borderLeft: "3px solid transparent",
+    "&:hover": {
+      borderLeftWidth: 8,
+    },
   },
   loader: {
     margin: "auto",
@@ -29,23 +35,45 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  words: string[];
+  words: Word[];
   extractingWords: boolean;
+  onFieldMouseLeave: (word: Word) => void;
+  onFieldMouseEnter: (word: Word) => void;
+  fieldRefsObject: any[];
 }
 export default function WordsList({
   words,
+  onFieldMouseEnter,
+  onFieldMouseLeave,
   extractingWords,
+  fieldRefsObject,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Words" id={COMPONENT_ID} className={classes.wrapper}>
-      <Grid container id={COMPONENT_ID} className={classes.list}>
+    <Card
+      header={`Words ${words.length ? `(${words.length})` : ""}`}
+      id={COMPONENT_ID}
+      className={classes.wrapper}
+    >
+      <Grid spacing={3} container id={COMPONENT_ID} className={classes.list}>
         {extractingWords ? (
           <CircularProgress className={classes.loader} />
         ) : (
           words.map((word, key) => (
-            <Grid className={classes.item} key={key} item xs={12}>
-              <Typography key={key}>{word}</Typography>
+            <Grid
+              onMouseEnter={() => onFieldMouseEnter(word)}
+              onMouseLeave={() => onFieldMouseLeave(word)}
+              className={classes.item}
+              key={key}
+              item
+              ref={fieldRefsObject[key]}
+              xs={12}
+              style={{
+                borderLeftColor: word.color,
+                borderLeftWidth: word.isActive ? 8 : undefined,
+              }}
+            >
+              <Typography key={key}>{word.words.join(", ")}</Typography>
             </Grid>
           ))
         )}
