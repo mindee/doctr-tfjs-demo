@@ -1,7 +1,14 @@
 import { Grid, makeStyles, Theme } from "@material-ui/core";
 import { GraphModel } from "@tensorflow/tfjs";
-import { useEffect, useRef, useState } from "react";
-import { AnnotationData, Stage } from "react-mindee-js";
+import { createRef, useEffect, useMemo, useRef, useState } from "react";
+import {
+  AnnotationData,
+  AnnotationShape,
+  drawLayer,
+  drawShape,
+  setShapeConfig,
+  Stage,
+} from "react-mindee-js";
 import {
   extractBoundingBoxesFromHeatmap,
   extractWords,
@@ -9,7 +16,8 @@ import {
   loadDetectionModel,
   loadRecognitionModel,
 } from "src/utils";
-import { UploadedFile } from "../common/types";
+import { useStateWithRef } from "src/utils/hooks";
+import { UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -34,7 +42,8 @@ export default function VisionWrapper(): JSX.Element {
   const [annotationData, setAnnotationData] = useState<AnnotationData>({
     image: null,
   });
-  const [words, setWords] = useState<string[]>([]);
+  const fieldRefsObject = useRef<any[]>([]);
+  const [words, setWords, wordsRef] = useStateWithRef<Word[]>([]);
 
   const onUpload = (newFile: UploadedFile) => {
     loadImage(newFile);
@@ -57,12 +66,11 @@ export default function VisionWrapper(): JSX.Element {
 
   const getWords = async () => {
     setExtractingWords(true);
-    const words = await extractWords({
+    const words = (await extractWords({
       recognitionModel: recognitionModel.current,
       stage: annotationStage.current!,
-    });
-    //@ts-ignore
-    setWords(words.map((value) => value.value));
+    })) as Word[];
+    setWords(words);
     setExtractingWords(false);
   };
 
@@ -79,6 +87,51 @@ export default function VisionWrapper(): JSX.Element {
   };
   const setAnnotationStage = (stage: Stage) => {
     annotationStage.current = stage;
+  };
+
+  const onFieldMouseLeave = (word: Word) => {
+    drawShape(annotationStage.current!, word.id, {
+      fill: `${word.color}33`,
+    });
+  };
+  const onFieldMouseEnter = (word: Word) => {
+    setShapeConfig(annotationStage.current!, word.id, {
+      fill: "transparent",
+    });
+
+    drawLayer(annotationStage.current!);
+  };
+  const onShapeMouseEnter = (shape: AnnotationShape) => {
+    const newWords = [...wordsRef.current];
+    const fieldIndex = newWords.findIndex((word) => word.id === shape.id);
+    if (fieldIndex >= 0) {
+      newWords[fieldIndex].isActive = true;
+      setWords(newWords);
+    }
+  };
+  const onShapeMouseLeave = (shape: AnnotationShape) => {
+    const newWords = [...wordsRef.current];
+    const fieldIndex = newWords.findIndex((word) => word.id === shape.id);
+    if (fieldIndex >= 0) {
+      newWords[fieldIndex].isActive = false;
+      setWords(newWords);
+    }
+  };
+  fieldRefsObject.current = useMemo(
+    () => words.map((word) => createRef()),
+    [words]
+  );
+  const onShapeClick = (shape: AnnotationShape) => {
+    const fieldIndex = wordsRef.current.findIndex(
+      (word) => word.id === shape.id
+    );
+
+    if (fieldIndex >= 0) {
+      fieldRefsObject.current[fieldIndex]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
   };
   return (
     <Grid
@@ -101,10 +154,19 @@ export default function VisionWrapper(): JSX.Element {
         <AnnotationViewer
           setAnnotationStage={setAnnotationStage}
           annotationData={annotationData}
+          onShapeMouseEnter={onShapeMouseEnter}
+          onShapeMouseLeave={onShapeMouseLeave}
+          onShapeClick={onShapeClick}
         />
       </Grid>
       <Grid item xs={6}>
-        <WordsList extractingWords={extractingWords} words={words} />
+        <WordsList
+          fieldRefsObject={fieldRefsObject.current}
+          onFieldMouseLeave={onFieldMouseLeave}
+          onFieldMouseEnter={onFieldMouseEnter}
+          extractingWords={extractingWords}
+          words={words}
+        />
       </Grid>
     </Grid>
   );

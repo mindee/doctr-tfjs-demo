@@ -14,6 +14,8 @@ import {
   TensorLike,
   transpose,
 } from "@tensorflow/tfjs";
+import { Layer } from "konva/lib/Layer";
+import randomColor from "randomcolor";
 import { MutableRefObject } from "react";
 import { AnnotationShape, Stage } from "react-mindee-js";
 import { VOCAB } from "src/common/constants";
@@ -73,13 +75,15 @@ export const extractWords = async ({
   recognitionModel: GraphModel | null;
   stage: Stage;
 }) => {
-  const crops = await getCrops({ stage });
-  console.log({ crops });
+  const crops = (await getCrops({ stage })) as Array<{
+    id: string;
+    crop: string;
+    color: string;
+  }>;
 
-  return Promise.allSettled(
-    // @ts-ignore
+  return Promise.all(
     crops.map(
-      (crop: any) =>
+      (crop) =>
         new Promise((resolve) => {
           const imageObject = new Image();
           imageObject.onload = async () => {
@@ -87,29 +91,31 @@ export const extractWords = async ({
               recognitionModel,
               imageObject,
             });
-            console.log(words);
-            resolve(words);
+            resolve({ id: crop.id, words, color: crop.color });
           };
-          imageObject.src = crop.value;
+          imageObject.src = crop.crop;
         })
     )
   );
 };
 
 const getCrops = ({ stage }: { stage: Stage }) => {
-  const layer = stage.findOne("#shapes-layer");
-  // @ts-ignore
-  const polygons: any = layer.find(".shape");
-  return Promise.allSettled(
-    polygons.map((polygon: any) => {
+  const layer = stage.findOne<Layer>("#shapes-layer");
+  const polygons = layer.find(".shape");
+  return Promise.all(
+    polygons.map((polygon) => {
       const clientRect = polygon.getClientRect();
       return new Promise((resolve) => {
         stage.toDataURL({
           ...clientRect,
           quality: 1,
           pixelRatio: 3,
-          callback: (value: any) => {
-            resolve(value);
+          callback: (value: string) => {
+            resolve({
+              id: polygon.id(),
+              crop: value,
+              color: polygon.getAttr("stroke"),
+            });
           },
         });
       });
@@ -185,14 +191,19 @@ function clamp(number: number) {
   return Math.max(0, Math.min(number, 512));
 }
 
-export const transformBoundingBox = (contour: any) => {
-  let offset = contour.width * contour.height * 1.5 / (2 * (contour.width + contour.height))
+export const transformBoundingBox = (contour: any): AnnotationShape => {
+  let offset =
+    (contour.width * contour.height * 1.5) /
+    (2 * (contour.width + contour.height));
   const p1 = clamp(contour.x - offset);
   const p2 = clamp(p1 + contour.width + 2 * offset);
   const p3 = clamp(contour.y - offset);
   const p4 = clamp(p3 + contour.height + 2 * offset);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
+    config: {
+      stroke: randomColor(),
+    },
     coordinates: [
       [p1 / 512, p3 / 512],
       [p2 / 512, p3 / 512],
