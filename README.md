@@ -1,6 +1,6 @@
 # Doctr Tensorflow.js demo
 
-This project is based on [DocTR](https://github.com/mindee/doctr).
+This project is based on [docTR](https://github.com/mindee/doctr).
 It provides a end-to-end OCR built and trained with docTR, deployed with Tensorflow.js.
 
 You can choose between 2 detection models:
