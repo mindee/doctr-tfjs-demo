@@ -7,7 +7,7 @@
 This project is based on [docTR](https://github.com/mindee/doctr).
 It provides a end-to-end OCR built and trained with docTR, deployed with Tensorflow.js.
 
-<br/>
+<br/><br/>
 
 You can choose between 2 detection models:
 - `db_resnet50`, high-resolution (heavier but stronger)
