@@ -2,23 +2,26 @@ import cv from "@techstark/opencv-js";
 import {
   argMax,
   browser,
-  getBackend,
   GraphModel,
   loadGraphModel,
-  Rank,
   scalar,
-  setBackend,
   softmax,
   squeeze,
-  Tensor,
-  TensorLike,
-  transpose,
 } from "@tensorflow/tfjs";
 import { Layer } from "konva/lib/Layer";
 import randomColor from "randomcolor";
 import { MutableRefObject } from "react";
 import { AnnotationShape, Stage } from "react-mindee-js";
-import { VOCAB } from "src/common/constants";
+import { 
+  DET_MEAN,
+  DET_STD,
+  DET_MODEL_URL,
+  DET_SIZE,
+  REC_MEAN,
+  REC_STD,
+  REC_MODEL_URL,
+  VOCAB
+ } from "src/common/constants";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -26,7 +29,7 @@ export const loadRecognitionModel = async ({
   recognitionModel: MutableRefObject<GraphModel | null>;
 }) => {
   try {
-    recognitionModel.current = await loadGraphModel("models/crnn/model.json");
+    recognitionModel.current = await loadGraphModel(REC_MODEL_URL);
   } catch (error) {
     console.log(error);
   }
@@ -38,9 +41,7 @@ export const loadDetectionModel = async ({
   detectionModel: MutableRefObject<GraphModel | null>;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(
-      "models/detection/model.json"
-    );
+    detectionModel.current = await loadGraphModel(DET_MODEL_URL);
   } catch (error) {
     console.log(error);
   }
@@ -53,8 +54,9 @@ export const getImageTensorForRecognitionModel = (
     .fromPixels(imageObject)
     .resizeNearestNeighbor([32, 128])
     .toFloat();
-  let offset = scalar(127.5);
-  return tensor.sub(offset).div(offset).expandDims();
+  let mean = scalar(255 * REC_MEAN);
+  let std = scalar(255 * REC_STD)
+  return tensor.sub(mean).div(std).expandDims();
 };
 
 export const getImageTensorForDetectionModel = (
@@ -62,10 +64,11 @@ export const getImageTensorForDetectionModel = (
 ) => {
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([512, 512])
+    .resizeNearestNeighbor([DET_SIZE, DET_SIZE])
     .toFloat();
-  let offset = scalar(127.5);
-  return tensor.sub(offset).div(offset).expandDims();
+  let mean = scalar(255 * DET_MEAN);
+  let std = scalar(255 * DET_STD)
+  return tensor.sub(mean).div(std).expandDims();
 };
 
 export const extractWords = async ({
@@ -188,7 +191,7 @@ export const getHeatMapFromImage = async ({
     }
   });
 function clamp(number: number) {
-  return Math.max(0, Math.min(number, 512));
+  return Math.max(0, Math.min(number, DET_SIZE));
 }
 
 export const transformBoundingBox = (contour: any): AnnotationShape => {
@@ -205,10 +208,10 @@ export const transformBoundingBox = (contour: any): AnnotationShape => {
       stroke: randomColor(),
     },
     coordinates: [
-      [p1 / 512, p3 / 512],
-      [p2 / 512, p3 / 512],
-      [p2 / 512, p4 / 512],
-      [p1 / 512, p4 / 512],
+      [p1 / DET_SIZE, p3 / DET_SIZE],
+      [p2 / DET_SIZE, p3 / DET_SIZE],
+      [p2 / DET_SIZE, p4 / DET_SIZE],
+      [p1 / DET_SIZE, p4 / DET_SIZE],
     ],
   };
 };

@@ -1,7 +1,6 @@
 import { Box, makeStyles, Theme } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
 import { MutableRefObject } from "react";
-import { HEATMAP_CANVAS_ID } from "src/common/constants";
 
 const COMPONENT_ID = "HeatMap";
 
@@ -20,7 +19,7 @@ interface Props {
 export default function HeatMap({ heatMapContainerRef }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Heatmap" id={COMPONENT_ID}>
+    <Card header="Text localization (segmentation)" id={COMPONENT_ID}>
       <canvas
         className={classes.image}
         id="heatmap"
