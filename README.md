@@ -1,6 +1,6 @@
 # Doctr Tensorflow.js demo
 
-<img align="left" src="https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/icon_doctr.gif">
+<img width="15%" align="left" src="https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/icon_doctr.gif">
 
 This project is based on [docTR](https://github.com/mindee/doctr).
 It provides a end-to-end OCR built and trained with docTR, deployed with Tensorflow.js.
