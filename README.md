@@ -22,6 +22,7 @@ with the `tensorflowjs_converter`.
 
 The segmentation postprocessing is performed with OpenCV.js
 
+![demo](https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/demo.png)
 
 ### Use the interface
 
