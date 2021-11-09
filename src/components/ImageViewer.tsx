@@ -32,7 +32,7 @@ export default function ImageViewer({
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Image viewer" className={classes.wrapper}>
+    <Card header="Input image" className={classes.wrapper}>
       <Uploader style={{ height: "35vh" }} onUpload={onUpload}>
         {uploadedImage ? (
           <img alt="viewer" className={classes.image} src={uploadedImage} />
