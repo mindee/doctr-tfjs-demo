@@ -7,8 +7,8 @@ const COMPONENT_ID = "HeatMap";
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {},
   image: {
-    height: "34vh",
-    width: "100%",
+    height: "35vh",
+    margin: "auto",
   },
 }));
 
@@ -19,7 +19,11 @@ interface Props {
 export default function HeatMap({ heatMapContainerRef }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Text localization (segmentation)" id={COMPONENT_ID}>
+    <Card
+      contentStyle={{ display: "flex" }}
+      header="Text localization (segmentation)"
+      id={COMPONENT_ID}
+    >
       <canvas
         className={classes.image}
         id="heatmap"

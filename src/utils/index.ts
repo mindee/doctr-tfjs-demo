@@ -12,7 +12,7 @@ import { Layer } from "konva/lib/Layer";
 import randomColor from "randomcolor";
 import { MutableRefObject } from "react";
 import { AnnotationShape, Stage } from "react-mindee-js";
-import { 
+import {
   DET_MEAN,
   DET_STD,
   DET_MODEL_URL,
@@ -20,8 +20,8 @@ import {
   REC_MEAN,
   REC_STD,
   REC_MODEL_URL,
-  VOCAB
- } from "src/common/constants";
+  VOCAB,
+} from "src/common/constants";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -55,7 +55,7 @@ export const getImageTensorForRecognitionModel = (
     .resizeNearestNeighbor([32, 128])
     .toFloat();
   let mean = scalar(255 * REC_MEAN);
-  let std = scalar(255 * REC_STD)
+  let std = scalar(255 * REC_STD);
   return tensor.sub(mean).div(std).expandDims();
 };
 
@@ -67,7 +67,7 @@ export const getImageTensorForDetectionModel = (
     .resizeNearestNeighbor([DET_SIZE, DET_SIZE])
     .toFloat();
   let mean = scalar(255 * DET_MEAN);
-  let std = scalar(255 * DET_STD)
+  let std = scalar(255 * DET_STD);
   return tensor.sub(mean).div(std).expandDims();
 };
 
@@ -235,7 +235,10 @@ export const extractBoundingBoxesFromHeatmap = () => {
   const boundingBoxes = [];
   // @ts-ignore
   for (let i = 0; i < contours.size(); ++i) {
-    boundingBoxes.push(transformBoundingBox(cv.boundingRect(contours.get(i))));
+    const contourBoundingBox = cv.boundingRect(contours.get(i));
+    if (contourBoundingBox.width > 2 && contourBoundingBox.height > 2) {
+      boundingBoxes.push(transformBoundingBox(contourBoundingBox));
+    }
   }
   src.delete();
   contours.delete();
