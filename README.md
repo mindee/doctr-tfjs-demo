@@ -1,5 +1,7 @@
 # Doctr Tensorflow.js demo
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 <img width="15%" align="left" src="https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/icon_doctr.gif">
 
 <br/>
@@ -26,22 +28,26 @@ This is what it looks like when you launch the app:
 
 ![demo](https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/demo.png)
 
-### Use the interface
+## Use the interface
 
 You need to upload an image (top-left window), and it will automatically run the OCR on the document.
 The segmentation heatmap will be displayed on the top-right window, the word-level boxes will be diplayed
 on the bottom-left window and the words will be displayed on the bottom-right window.
 
 
-### Getting started
+## Getting started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 In the project directory, you can run: `yarn install` to install yarn, and then `yarn start`to launch the react app.
 
 
-### Learn More
+## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## License
+
+Distributed under the Apache 2.0 License. See [`LICENSE`](LICENSE) for more information.
