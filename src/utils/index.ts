@@ -20,13 +20,13 @@ import { AnnotationShape, Stage } from "react-mindee-js";
 import {
   DET_MEAN,
   DET_STD,
-  DET_MODEL_URL,
   DET_SIZE,
   REC_MEAN,
   REC_STD,
   REC_MODEL_URL,
   VOCAB,
 } from "src/common/constants";
+import { DetectionModelType } from "src/common/types";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -42,11 +42,13 @@ export const loadRecognitionModel = async ({
 
 export const loadDetectionModel = async ({
   detectionModel,
+  detectionModelType,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
+  detectionModelType: DetectionModelType;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(DET_MODEL_URL);
+    detectionModel.current = await loadGraphModel(detectionModelType.path);
   } catch (error) {
     console.log(error);
   }

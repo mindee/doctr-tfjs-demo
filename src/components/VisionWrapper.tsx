@@ -22,7 +22,7 @@ import {
   loadRecognitionModel,
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
-import { UploadedFile, Word } from "../common/types";
+import { DetectionModelType, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -36,8 +36,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function VisionWrapper(): JSX.Element {
+interface Props {
+  detectionModelType: DetectionModelType;
+}
+
+export default function VisionWrapper({
+  detectionModelType,
+}: Props): JSX.Element {
   const classes = useStyles();
+
   const recognitionModel = useRef<GraphModel | null>(null);
   const detectionModel = useRef<GraphModel | null>(null);
   const imageObject = useRef<HTMLImageElement>(new Image());
@@ -50,15 +57,25 @@ export default function VisionWrapper(): JSX.Element {
   const fieldRefsObject = useRef<any[]>([]);
   const [words, setWords, wordsRef] = useStateWithRef<Word[]>([]);
 
+  const clearCurrentStates = () => {
+    setWords([]);
+  };
+
   const onUpload = (newFile: UploadedFile) => {
+    clearCurrentStates();
     loadImage(newFile);
     setAnnotationData({ image: newFile.image });
   };
 
   useEffect(() => {
     loadRecognitionModel({ recognitionModel });
-    loadDetectionModel({ detectionModel });
   }, []);
+
+  useEffect(() => {
+    setWords([]);
+    setAnnotationData({ image: null });
+    loadDetectionModel({ detectionModel, detectionModelType });
+  }, [detectionModelType]);
 
   const getBoundingBoxes = () => {
     const boundingBoxes = extractBoundingBoxesFromHeatmap();
