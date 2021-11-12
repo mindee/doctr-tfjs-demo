@@ -20,13 +20,12 @@ import { AnnotationShape, Stage } from "react-mindee-js";
 import {
   DET_MEAN,
   DET_STD,
-  DET_MODEL_URL,
-  DET_SIZE,
   REC_MEAN,
   REC_STD,
   REC_MODEL_URL,
   VOCAB,
 } from "src/common/constants";
+import { DetectionModelType } from "src/common/types";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -42,11 +41,13 @@ export const loadRecognitionModel = async ({
 
 export const loadDetectionModel = async ({
   detectionModel,
+  detectionModelType,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
+  detectionModelType: DetectionModelType;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(DET_MODEL_URL);
+    detectionModel.current = await loadGraphModel(detectionModelType.path);
   } catch (error) {
     console.log(error);
   }
@@ -65,11 +66,12 @@ export const getImageTensorForRecognitionModel = (
 };
 
 export const getImageTensorForDetectionModel = (
-  imageObject: HTMLImageElement
+  imageObject: HTMLImageElement,
+  size: number
 ) => {
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([DET_SIZE, DET_SIZE])
+    .resizeNearestNeighbor([size, size])
     .toFloat();
   let mean = scalar(255 * DET_MEAN);
   let std = scalar(255 * DET_STD);
@@ -170,10 +172,12 @@ export const getHeatMapFromImage = async ({
   heatmapContainer,
   detectionModel,
   imageObject,
+  size,
 }: {
   detectionModel: GraphModel | null;
   heatmapContainer: HTMLCanvasElement | null;
   imageObject: HTMLImageElement;
+  size: number;
 }) =>
   new Promise(async (resolve) => {
     {
@@ -183,7 +187,7 @@ export const getHeatMapFromImage = async ({
 
       heatmapContainer!.width = imageObject.width;
       heatmapContainer!.height = imageObject.height;
-      let tensor = getImageTensorForDetectionModel(imageObject);
+      let tensor = getImageTensorForDetectionModel(imageObject, size);
       let prediction: any = await detectionModel?.execute(tensor);
       // @ts-ignore
       prediction = squeeze(prediction, 0);
@@ -195,33 +199,36 @@ export const getHeatMapFromImage = async ({
       resolve("test");
     }
   });
-function clamp(number: number) {
-  return Math.max(0, Math.min(number, DET_SIZE));
+function clamp(number: number, size: number) {
+  return Math.max(0, Math.min(number, size));
 }
 
-export const transformBoundingBox = (contour: any): AnnotationShape => {
+export const transformBoundingBox = (
+  contour: any,
+  size: number
+): AnnotationShape => {
   let offset =
     (contour.width * contour.height * 1.5) /
     (2 * (contour.width + contour.height));
-  const p1 = clamp(contour.x - offset);
-  const p2 = clamp(p1 + contour.width + 2 * offset);
-  const p3 = clamp(contour.y - offset);
-  const p4 = clamp(p3 + contour.height + 2 * offset);
+  const p1 = clamp(contour.x - offset, size);
+  const p2 = clamp(p1 + contour.width + 2 * offset, size);
+  const p3 = clamp(contour.y - offset, size);
+  const p4 = clamp(p3 + contour.height + 2 * offset, size);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     config: {
       stroke: randomColor(),
     },
     coordinates: [
-      [p1 / DET_SIZE, p3 / DET_SIZE],
-      [p2 / DET_SIZE, p3 / DET_SIZE],
-      [p2 / DET_SIZE, p4 / DET_SIZE],
-      [p1 / DET_SIZE, p4 / DET_SIZE],
+      [p1 / size, p3 / size],
+      [p2 / size, p3 / size],
+      [p2 / size, p4 / size],
+      [p1 / size, p4 / size],
     ],
   };
 };
 
-export const extractBoundingBoxesFromHeatmap = () => {
+export const extractBoundingBoxesFromHeatmap = (size: number) => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);
@@ -242,7 +249,7 @@ export const extractBoundingBoxesFromHeatmap = () => {
   for (let i = 0; i < contours.size(); ++i) {
     const contourBoundingBox = cv.boundingRect(contours.get(i));
     if (contourBoundingBox.width > 2 && contourBoundingBox.height > 2) {
-      boundingBoxes.push(transformBoundingBox(contourBoundingBox));
+      boundingBoxes.push(transformBoundingBox(contourBoundingBox, size));
     }
   }
   src.delete();

@@ -22,7 +22,7 @@ import {
   loadRecognitionModel,
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
-import { UploadedFile, Word } from "../common/types";
+import { DetectionModelType, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -36,8 +36,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function VisionWrapper(): JSX.Element {
+interface Props {
+  detectionModelType: DetectionModelType;
+}
+
+export default function VisionWrapper({
+  detectionModelType,
+}: Props): JSX.Element {
   const classes = useStyles();
+
   const recognitionModel = useRef<GraphModel | null>(null);
   const detectionModel = useRef<GraphModel | null>(null);
   const imageObject = useRef<HTMLImageElement>(new Image());
@@ -50,18 +57,40 @@ export default function VisionWrapper(): JSX.Element {
   const fieldRefsObject = useRef<any[]>([]);
   const [words, setWords, wordsRef] = useStateWithRef<Word[]>([]);
 
+  const clearCurrentStates = () => {
+    setWords([]);
+  };
+
   const onUpload = (newFile: UploadedFile) => {
+    clearCurrentStates();
     loadImage(newFile);
     setAnnotationData({ image: newFile.image });
   };
 
   useEffect(() => {
     loadRecognitionModel({ recognitionModel });
-    loadDetectionModel({ detectionModel });
   }, []);
 
+  useEffect(() => {
+    setWords([]);
+    setAnnotationData({ image: null });
+    imageObject.current.src = "";
+    if (heatMapContainerObject.current) {
+      const context = heatMapContainerObject.current.getContext("2d");
+      context?.clearRect(
+        0,
+        0,
+        heatMapContainerObject.current.width,
+        heatMapContainerObject.current.height
+      );
+    }
+    loadDetectionModel({ detectionModel, detectionModelType });
+  }, [detectionModelType]);
+
   const getBoundingBoxes = () => {
-    const boundingBoxes = extractBoundingBoxesFromHeatmap();
+    const boundingBoxes = extractBoundingBoxesFromHeatmap(
+      detectionModelType.size
+    );
     setAnnotationData({
       image: imageObject.current.src,
       shapes: boundingBoxes,
@@ -85,6 +114,7 @@ export default function VisionWrapper(): JSX.Element {
         heatmapContainer: heatMapContainerObject.current,
         detectionModel: detectionModel.current,
         imageObject: imageObject.current,
+        size: detectionModelType.size,
       });
       getBoundingBoxes();
     };
