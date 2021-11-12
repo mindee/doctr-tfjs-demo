@@ -74,11 +74,23 @@ export default function VisionWrapper({
   useEffect(() => {
     setWords([]);
     setAnnotationData({ image: null });
+    imageObject.current.src = "";
+    if (heatMapContainerObject.current) {
+      const context = heatMapContainerObject.current.getContext("2d");
+      context?.clearRect(
+        0,
+        0,
+        heatMapContainerObject.current.width,
+        heatMapContainerObject.current.height
+      );
+    }
     loadDetectionModel({ detectionModel, detectionModelType });
   }, [detectionModelType]);
 
   const getBoundingBoxes = () => {
-    const boundingBoxes = extractBoundingBoxesFromHeatmap();
+    const boundingBoxes = extractBoundingBoxesFromHeatmap(
+      detectionModelType.size
+    );
     setAnnotationData({
       image: imageObject.current.src,
       shapes: boundingBoxes,
@@ -102,6 +114,7 @@ export default function VisionWrapper({
         heatmapContainer: heatMapContainerObject.current,
         detectionModel: detectionModel.current,
         imageObject: imageObject.current,
+        size: detectionModelType.size,
       });
       getBoundingBoxes();
     };

@@ -7,7 +7,6 @@
 
 export const DET_MEAN = 0.785;
 export const DET_STD = 0.275;
-export const DET_SIZE = 512; // TODO: if heavy model selected, set this size to 1024
 
 // Recognition cfg
 
@@ -21,11 +20,13 @@ export const DETECTION_MODEL_TYPE = {
   mobilenet: {
     value: "mobilenet",
     label: "MobileNet",
+    size: 512,
     path: "models/detection_mobilenet/model.json",
   },
   resnet: {
     value: "resnet",
     label: "ResNet",
+    size: 1024,
     path: "models/detection_resnet/model.json",
   },
 };
