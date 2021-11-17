@@ -7,12 +7,16 @@ import cv from "@techstark/opencv-js";
 import {
   argMax,
   browser,
+  concat,
   GraphModel,
   loadGraphModel,
   scalar,
   softmax,
   squeeze,
+  unstack,
 } from "@tensorflow/tfjs";
+// @ts-ignore
+import combineImage from "merge-images";
 import { Layer } from "konva/lib/Layer";
 import randomColor from "randomcolor";
 import { MutableRefObject } from "react";
@@ -26,6 +30,7 @@ import {
   VOCAB,
 } from "src/common/constants";
 import { DetectionModelType } from "src/common/types";
+import { chunk } from "underscore";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -53,16 +58,18 @@ export const loadDetectionModel = async ({
   }
 };
 
-export const getImageTensorForRecognitionModel = (
-  imageObject: HTMLImageElement
-) => {
-  let tensor = browser
-    .fromPixels(imageObject)
-    .resizeNearestNeighbor([32, 128])
-    .toFloat();
+export const getImageTensorForRecognitionModel = (crops: any) => {
+  const list = crops.map((crop: any) => {
+    return browser
+      .fromPixels(crop.crop)
+      .resizeNearestNeighbor([32, 128])
+      .toFloat()
+      .expandDims();
+  });
+  const tensor = concat(list);
   let mean = scalar(255 * REC_MEAN);
   let std = scalar(255 * REC_STD);
-  return tensor.sub(mean).div(std).expandDims();
+  return tensor.sub(mean).div(std);
 };
 
 export const getImageTensorForDetectionModel = (
@@ -87,26 +94,44 @@ export const extractWords = async ({
 }) => {
   const crops = (await getCrops({ stage })) as Array<{
     id: string;
-    crop: string;
+    crop: HTMLImageElement;
     color: string;
   }>;
-
+  const chunks = chunk(crops, 64);
   return Promise.all(
-    crops.map(
-      (crop) =>
-        new Promise((resolve) => {
-          const imageObject = new Image();
-          imageObject.onload = async () => {
-            const words = await extractWordsFromCrop({
-              recognitionModel,
-              imageObject,
-            });
-            resolve({ id: crop.id, words, color: crop.color });
-          };
-          imageObject.src = crop.crop;
+    [chunks[0]].map(
+      (chunk) =>
+        new Promise(async (resolve) => {
+          const words = await extractWordsFromCrop({
+            recognitionModel,
+            crops: chunk,
+          });
+          console.log(words);
+          //   resolve({ id: crop.id, words, color: crop.color });
         })
     )
   );
+};
+
+export const dataURItoBlob = (dataURI: string) => {
+  let byteString;
+  const splitDataURL = dataURI.split(",");
+  if (splitDataURL[0].indexOf("base64") >= 0) {
+    // atob decodes base64 data
+    byteString = atob(splitDataURL[1]);
+  } else {
+    byteString = decodeURI(dataURI.split(",")[1]);
+  }
+
+  const mimeString = splitDataURL[0].split(":")[1].split(";")[0];
+
+  // write the bytes of the string to a typed array
+  const ia = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], { type: mimeString });
 };
 
 const getCrops = ({ stage }: { stage: Stage }) => {
@@ -116,11 +141,11 @@ const getCrops = ({ stage }: { stage: Stage }) => {
     polygons.map((polygon) => {
       const clientRect = polygon.getClientRect();
       return new Promise((resolve) => {
-        stage.toDataURL({
+        stage.toImage({
           ...clientRect,
           quality: 1,
           pixelRatio: 3,
-          callback: (value: string) => {
+          callback: (value: any) => {
             resolve({
               id: polygon.id(),
               crop: value,
@@ -135,19 +160,25 @@ const getCrops = ({ stage }: { stage: Stage }) => {
 
 export const extractWordsFromCrop = async ({
   recognitionModel,
-  imageObject,
+  crops,
 }: {
   recognitionModel: GraphModel | null;
-  imageObject: HTMLImageElement;
+  crops: any;
 }) => {
   if (!recognitionModel) {
     return;
   }
-  let tensor = getImageTensorForRecognitionModel(imageObject);
+  console.log("before tensor");
+  let tensor = getImageTensorForRecognitionModel(crops);
+  console.log("after tensor");
   let predictions = await recognitionModel.executeAsync(tensor);
+
+  //  @ts-ignore
+  console.log(predictions.shape);
   // @ts-ignore
   let probabilities = softmax(predictions, -1);
-  let bestPath = [argMax(probabilities, -1)];
+  let bestPath = unstack(argMax(probabilities, -1), 0);
+  console.log(bestPath);
   let blank = 123;
   var words = [];
   for (const sequence of bestPath) {
