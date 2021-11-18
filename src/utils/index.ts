@@ -56,9 +56,21 @@ export const loadDetectionModel = async ({
 export const getImageTensorForRecognitionModel = (
   imageObject: HTMLImageElement
 ) => {
+  let h = imageObject.height
+  let w = imageObject.width
+  let resize_target: any
+  let padding_target: any
+  if (4 * h > w) {
+      resize_target = [32, Math.round(32 * w / h)];
+      padding_target = [[0, 0], [0, 128 - Math.round(32 * w / h)], [0, 0]];
+  } else {
+      resize_target = [Math.round(128 * h / w), 128];
+      padding_target = [[0, 32 - Math.round(128 * h / w)], [0, 0], [0, 0]];
+  }
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([32, 128])
+    .resizeNearestNeighbor(resize_target)
+    .pad(padding_target, 0)
     .toFloat();
   let mean = scalar(255 * REC_MEAN);
   let std = scalar(255 * REC_STD);
@@ -119,7 +131,7 @@ const getCrops = ({ stage }: { stage: Stage }) => {
         stage.toDataURL({
           ...clientRect,
           quality: 1,
-          pixelRatio: 3,
+          pixelRatio: 10,
           callback: (value: string) => {
             resolve({
               id: polygon.id(),
