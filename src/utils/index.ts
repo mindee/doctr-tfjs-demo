@@ -24,6 +24,7 @@ import {
   REC_STD,
   REC_MODEL_URL,
   VOCAB,
+  REC_SIZE,
 } from "src/common/constants";
 import { DetectionModelType } from "src/common/types";
 
@@ -61,11 +62,11 @@ export const getImageTensorForRecognitionModel = (
   let resize_target: any
   let padding_target: any
   if (4 * h > w) {
-      resize_target = [32, Math.round(32 * w / h)];
-      padding_target = [[0, 0], [0, 128 - Math.round(32 * w / h)], [0, 0]];
+      resize_target = [REC_SIZE, Math.round(REC_SIZE * w / h)];
+      padding_target = [[0, 0], [0, 4 * REC_SIZE - Math.round(REC_SIZE * w / h)], [0, 0]];
   } else {
-      resize_target = [Math.round(128 * h / w), 128];
-      padding_target = [[0, 32 - Math.round(128 * h / w)], [0, 0], [0, 0]];
+      resize_target = [Math.round(4 * REC_SIZE * h / w), 4 * REC_SIZE];
+      padding_target = [[0, REC_SIZE - Math.round(4 * REC_SIZE * h / w)], [0, 0], [0, 0]];
   }
   let tensor = browser
     .fromPixels(imageObject)
