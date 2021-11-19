@@ -8,14 +8,6 @@
 export const DET_MEAN = 0.785;
 export const DET_STD = 0.275;
 
-// Recognition cfg
-
-export const REC_MEAN = 0.694;
-export const REC_STD = 0.298;
-export const REC_MODEL_URL = "models/crnn/model.json";
-export const VOCAB =
-  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~°àâéèêëîïôùûçÀÂÉÈËÎÏÔÙÛÇ£€¥¢฿";
-
 export const DETECTION_MODEL_TYPE = {
   mobilenet: {
     value: "mobilenet",
@@ -30,3 +22,12 @@ export const DETECTION_MODEL_TYPE = {
     path: "models/detection_resnet/model.json",
   },
 };
+
+// Recognition cfg
+
+export const REC_MEAN = 0.694;
+export const REC_STD = 0.298;
+export const REC_SIZE = 32
+export const REC_MODEL_URL = "models/crnn/model.json";
+export const VOCAB =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~°àâéèêëîïôùûçÀÂÉÈËÎÏÔÙÛÇ£€¥¢฿";

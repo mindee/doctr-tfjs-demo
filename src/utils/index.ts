@@ -24,6 +24,7 @@ import {
   REC_STD,
   REC_MODEL_URL,
   VOCAB,
+  REC_SIZE,
 } from "src/common/constants";
 import { DetectionModelType } from "src/common/types";
 
@@ -56,9 +57,21 @@ export const loadDetectionModel = async ({
 export const getImageTensorForRecognitionModel = (
   imageObject: HTMLImageElement
 ) => {
+  let h = imageObject.height
+  let w = imageObject.width
+  let resize_target: any
+  let padding_target: any
+  if (4 * h > w) {
+      resize_target = [REC_SIZE, Math.round(REC_SIZE * w / h)];
+      padding_target = [[0, 0], [0, 4 * REC_SIZE - Math.round(REC_SIZE * w / h)], [0, 0]];
+  } else {
+      resize_target = [Math.round(4 * REC_SIZE * h / w), 4 * REC_SIZE];
+      padding_target = [[0, REC_SIZE - Math.round(4 * REC_SIZE * h / w)], [0, 0], [0, 0]];
+  }
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([32, 128])
+    .resizeNearestNeighbor(resize_target)
+    .pad(padding_target, 0)
     .toFloat();
   let mean = scalar(255 * REC_MEAN);
   let std = scalar(255 * REC_STD);
@@ -119,7 +132,7 @@ const getCrops = ({ stage }: { stage: Stage }) => {
         stage.toDataURL({
           ...clientRect,
           quality: 1,
-          pixelRatio: 3,
+          pixelRatio: 10,
           callback: (value: string) => {
             resolve({
               id: polygon.id(),
