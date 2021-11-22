@@ -30,23 +30,41 @@ This is what it looks like when you launch the app:
 
 ## Use the interface
 
-You need to upload an image (top-left window), and it will automatically run the OCR on the document.
-The segmentation heatmap will be displayed on the top-right window, the word-level boxes will be diplayed
-on the bottom-left window and the words will be displayed on the bottom-right window.
+The interface is divided into four sections:
+- **Input Image** (top-left pannel): upload your image there by clicking in the area & selecting your file. Uploading a file will automatically run the OCR on it.
+- **Text localization** (top-right pannel): the output of the text localization module.
+- **Detected word boxes** (bottom-left pannel): visualization of the final predictions of the OCR.
+- **Words** (bottom-right pannel): the list of all the detected words. If you hover a prediction on the bottom-left pannel, it will highlight the corresponding text prediction in this section.
 
 
 ## Getting started
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Prerequisites
 
-In the project directory, you can run: `yarn install` to install yarn, and then `yarn start`to launch the react app.
+In order to install this project, you will need [Yarn](https://classic.yarnpkg.com/lang/en/docs/install), which is a package manager for [Node.js](https://nodejs.org/en/).
 
+### Installation
 
-## Learn More
+This demo was built using [React](https://reactjs.org/), a framework for JavaScript development. This demo requires you to install the project from the source code, which will require you to install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). First clone the project repository:
+```shell
+git clone https://github.com/mindee/doctr-tfjs-demo.git
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Then install the project using the following command:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```shell
+cd doctr-tfjs-demo
+yarn install
+```
+
+### Running the app locally
+
+Once all dependencies have been installed, launch the app using:
+```shell
+yarn start
+```
+and navigate with your web browser to the URL in the console. 
+
 
 ## License
 
