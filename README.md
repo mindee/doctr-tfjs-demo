@@ -1,6 +1,6 @@
 # Doctr Tensorflow.js demo
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) ![Build Status](https://github.com/mindee/doctr-tfjs-demo/workflows/builds/badge.svg)
 
 <img width="15%" align="left" src="https://github.com/teamMindee/tensorflow-js-demo/releases/download/v0.1-models/icon_doctr.gif">
 
