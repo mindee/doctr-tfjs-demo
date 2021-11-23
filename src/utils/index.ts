@@ -23,7 +23,6 @@ import {
   REC_MEAN,
   REC_STD,
   VOCAB,
-  REC_SIZE,
 } from "src/common/constants";
 import { ModelType } from "src/common/types";
 
@@ -57,17 +56,19 @@ export const loadDetectionModel = async ({
 
 export const getImageTensorForRecognitionModel = (
   imageObject: HTMLImageElement,
+  size: [number, number]
 ) => {
   let h = imageObject.height
   let w = imageObject.width
   let resize_target: any
   let padding_target: any
-  if (4 * h > w) {
-      resize_target = [REC_SIZE, Math.round(REC_SIZE * w / h)];
-      padding_target = [[0, 0], [0, 4 * REC_SIZE - Math.round(REC_SIZE * w / h)], [0, 0]];
+  let aspect_ratio = size[1] / size[0]
+  if (aspect_ratio * h > w) {
+      resize_target = [size[0], Math.round(size[0] * w / h)];
+      padding_target = [[0, 0], [0, size[1] - Math.round(size[0] * w / h)], [0, 0]];
   } else {
-      resize_target = [Math.round(4 * REC_SIZE * h / w), 4 * REC_SIZE];
-      padding_target = [[0, REC_SIZE - Math.round(4 * REC_SIZE * h / w)], [0, 0], [0, 0]];
+      resize_target = [Math.round(size[1] * h / w), size[1]];
+      padding_target = [[0, size[0] - Math.round(size[1] * h / w)], [0, 0], [0, 0]];
   }
   let tensor = browser
     .fromPixels(imageObject)
@@ -95,9 +96,11 @@ export const getImageTensorForDetectionModel = (
 export const extractWords = async ({
   recognitionModel,
   stage,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   stage: Stage;
+  size: [number, number];
 }) => {
   const crops = (await getCrops({ stage })) as Array<{
     id: string;
@@ -114,6 +117,7 @@ export const extractWords = async ({
             const words = await extractWordsFromCrop({
               recognitionModel,
               imageObject,
+              size,
             });
             resolve({ id: crop.id, words, color: crop.color });
           };
@@ -150,14 +154,16 @@ const getCrops = ({ stage }: { stage: Stage }) => {
 export const extractWordsFromCrop = async ({
   recognitionModel,
   imageObject,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   imageObject: HTMLImageElement;
+  size: [number, number];
 }) => {
   if (!recognitionModel) {
     return;
   }
-  let tensor = getImageTensorForRecognitionModel(imageObject);
+  let tensor = getImageTensorForRecognitionModel(imageObject, size);
   let predictions = await recognitionModel.executeAsync(tensor);
   // @ts-ignore
   let probabilities = softmax(predictions, -1);

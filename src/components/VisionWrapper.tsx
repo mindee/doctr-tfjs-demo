@@ -117,6 +117,7 @@ export default function VisionWrapper({
     const words = (await extractWords({
       recognitionModel: recognitionModel.current,
       stage: annotationStage.current!,
+      size: [recognitionModelType.height, recognitionModelType.width],
     })) as Word[];
     setWords(words);
     setExtractingWords(false);
