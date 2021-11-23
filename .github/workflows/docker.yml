@@ -16,4 +16,4 @@ jobs:
       - name: Run docker container
         run: docker run -d -p 8080:3000 doctr-tfjs:node12-alpine
       - name: Check that the container accepts requests
-        run: sleep 10 & curl localhost:8080
+        run: sleep 10 && curl localhost:8080
