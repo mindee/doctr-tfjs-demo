@@ -1,6 +1,9 @@
-FROM node:14-slim
+FROM node:12-alpine
 
 WORKDIR /usr/src/app
+
+RUN set -eux \
+    && npm install -g serve
 
 COPY ./package.json ./
 COPY ./yarn.lock ./
@@ -12,4 +15,6 @@ COPY ./.env ./
 COPY ./public ./public
 COPY ./src ./src
 
-CMD [ "yarn", "start"]
+RUN yarn build \
+    && rm -r public src node_modules
+CMD [ "serve", "-s", "build"]
