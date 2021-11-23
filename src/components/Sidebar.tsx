@@ -6,9 +6,9 @@
 import React from "react";
 import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
-import { DetectionModelType } from "src/common/types";
+import { ModelType } from "src/common/types";
 import Select from "react-select";
-import { DETECTION_MODEL_TYPE } from "src/common/constants";
+import { DET_MODEL_TYPE, RECO_MODEL_TYPE } from "src/common/constants";
 
 const COMPONENT_ID = "Sidebar";
 
@@ -19,22 +19,34 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  detectionModelType: DetectionModelType;
+  detectionModelType: ModelType;
   setDetectionModelType: (value: any) => void;
+  recognitionModelType: ModelType;
+  setRecognitionModelType: (value: any) => void;
 }
 export default function Sidebar({
   detectionModelType,
   setDetectionModelType,
+  recognitionModelType,
+  setRecognitionModelType,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
     <Card header="Settings" id={COMPONENT_ID} className={classes.wrapper}>
       <Box display="flex" flexDirection="column ">
-        <Typography>Select a detection backbone</Typography>
+        <Typography>Text detection architecture (backbone)</Typography>
         <Select
           value={detectionModelType}
           onChange={(value) => setDetectionModelType(value)}
-          options={Object.values(DETECTION_MODEL_TYPE)}
+          options={Object.values(DET_MODEL_TYPE)}
+        />
+      </Box>
+      <Box display="flex" flexDirection="column ">
+        <Typography>Text recognition architecture (backbone)</Typography>
+        <Select
+          value={recognitionModelType}
+          onChange={(value) => setRecognitionModelType(value)}
+          options={Object.values(RECO_MODEL_TYPE)}
         />
       </Box>
     </Card>

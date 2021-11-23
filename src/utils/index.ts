@@ -22,19 +22,20 @@ import {
   DET_STD,
   REC_MEAN,
   REC_STD,
-  REC_MODEL_URL,
   VOCAB,
   REC_SIZE,
 } from "src/common/constants";
-import { DetectionModelType } from "src/common/types";
+import { ModelType } from "src/common/types";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
+  recognitionModelType,
 }: {
   recognitionModel: MutableRefObject<GraphModel | null>;
+  recognitionModelType: ModelType;
 }) => {
   try {
-    recognitionModel.current = await loadGraphModel(REC_MODEL_URL);
+    recognitionModel.current = await loadGraphModel(recognitionModelType.path);
   } catch (error) {
     console.log(error);
   }
@@ -45,7 +46,7 @@ export const loadDetectionModel = async ({
   detectionModelType,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
-  detectionModelType: DetectionModelType;
+  detectionModelType: ModelType;
 }) => {
   try {
     detectionModel.current = await loadGraphModel(detectionModelType.path);
@@ -55,7 +56,7 @@ export const loadDetectionModel = async ({
 };
 
 export const getImageTensorForRecognitionModel = (
-  imageObject: HTMLImageElement
+  imageObject: HTMLImageElement,
 ) => {
   let h = imageObject.height
   let w = imageObject.width
@@ -80,11 +81,11 @@ export const getImageTensorForRecognitionModel = (
 
 export const getImageTensorForDetectionModel = (
   imageObject: HTMLImageElement,
-  size: number
+  size: [number, number]
 ) => {
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([size, size])
+    .resizeNearestNeighbor(size)
     .toFloat();
   let mean = scalar(255 * DET_MEAN);
   let std = scalar(255 * DET_STD);
@@ -190,7 +191,7 @@ export const getHeatMapFromImage = async ({
   detectionModel: GraphModel | null;
   heatmapContainer: HTMLCanvasElement | null;
   imageObject: HTMLImageElement;
-  size: number;
+  size: [number, number];
 }) =>
   new Promise(async (resolve) => {
     {
@@ -218,30 +219,30 @@ function clamp(number: number, size: number) {
 
 export const transformBoundingBox = (
   contour: any,
-  size: number
+  size: [number, number]
 ): AnnotationShape => {
   let offset =
     (contour.width * contour.height * 1.5) /
     (2 * (contour.width + contour.height));
-  const p1 = clamp(contour.x - offset, size);
-  const p2 = clamp(p1 + contour.width + 2 * offset, size);
-  const p3 = clamp(contour.y - offset, size);
-  const p4 = clamp(p3 + contour.height + 2 * offset, size);
+  const p1 = clamp(contour.x - offset, size[1]);
+  const p2 = clamp(p1 + contour.width + 2 * offset, size[1]);
+  const p3 = clamp(contour.y - offset, size[0]);
+  const p4 = clamp(p3 + contour.height + 2 * offset, size[0]);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     config: {
       stroke: randomColor(),
     },
     coordinates: [
-      [p1 / size, p3 / size],
-      [p2 / size, p3 / size],
-      [p2 / size, p4 / size],
-      [p1 / size, p4 / size],
+      [p1 / size[1], p3 / size[0]],
+      [p2 / size[1], p3 / size[0]],
+      [p2 / size[1], p4 / size[0]],
+      [p1 / size[1], p4 / size[0]],
     ],
   };
 };
 
-export const extractBoundingBoxesFromHeatmap = (size: number) => {
+export const extractBoundingBoxesFromHeatmap = (size: [number, number]) => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);

@@ -5,7 +5,7 @@
 
 import { Grid, makeStyles, Theme } from "@material-ui/core";
 import { useState } from "react";
-import { DETECTION_MODEL_TYPE } from "./common/constants";
+import { DET_MODEL_TYPE, RECO_MODEL_TYPE } from "./common/constants";
 import Sidebar from "./components/Sidebar";
 import VisionWrapper from "./components/VisionWrapper";
 
@@ -20,7 +20,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 function App() {
   const classes = useStyles();
   const [detectionModelType, setDetectionModelType] = useState(
-    DETECTION_MODEL_TYPE.mobilenet
+    DET_MODEL_TYPE.db_mobilenet_v2
+  );
+  const [recognitionModelType, setRecognitionModelType] = useState(
+    RECO_MODEL_TYPE.crnn_vgg16_bn
   );
   return (
     <Grid className={classes.wrapper} container spacing={2}>
@@ -28,10 +31,15 @@ function App() {
         <Sidebar
           detectionModelType={detectionModelType}
           setDetectionModelType={setDetectionModelType}
+          recognitionModelType={recognitionModelType}
+          setRecognitionModelType={setRecognitionModelType}
         />
       </Grid>
       <Grid item xs={9}>
-        <VisionWrapper detectionModelType={detectionModelType} />
+        <VisionWrapper
+          detectionModelType={detectionModelType}
+          recognitionModelType={recognitionModelType}
+        />
       </Grid>
     </Grid>
   );

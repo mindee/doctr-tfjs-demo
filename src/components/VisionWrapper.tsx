@@ -22,7 +22,7 @@ import {
   loadRecognitionModel,
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
-import { DetectionModelType, UploadedFile, Word } from "../common/types";
+import { ModelType, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -37,11 +37,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  detectionModelType: DetectionModelType;
+  detectionModelType: ModelType;
+  recognitionModelType: ModelType;
 }
 
 export default function VisionWrapper({
   detectionModelType,
+  recognitionModelType,
 }: Props): JSX.Element {
   const classes = useStyles();
 
@@ -68,8 +70,20 @@ export default function VisionWrapper({
   };
 
   useEffect(() => {
-    loadRecognitionModel({ recognitionModel });
-  }, []);
+    setWords([]);
+    setAnnotationData({ image: null });
+    imageObject.current.src = "";
+    if (heatMapContainerObject.current) {
+      const context = heatMapContainerObject.current.getContext("2d");
+      context?.clearRect(
+        0,
+        0,
+        heatMapContainerObject.current.width,
+        heatMapContainerObject.current.height
+      );
+    }
+    loadRecognitionModel({ recognitionModel, recognitionModelType });
+  }, [recognitionModelType]);
 
   useEffect(() => {
     setWords([]);
@@ -89,7 +103,7 @@ export default function VisionWrapper({
 
   const getBoundingBoxes = () => {
     const boundingBoxes = extractBoundingBoxesFromHeatmap(
-      detectionModelType.size
+      [detectionModelType.height, detectionModelType.width]
     );
     setAnnotationData({
       image: imageObject.current.src,
@@ -114,7 +128,7 @@ export default function VisionWrapper({
         heatmapContainer: heatMapContainerObject.current,
         detectionModel: detectionModel.current,
         imageObject: imageObject.current,
-        size: detectionModelType.size,
+        size: [detectionModelType.height, detectionModelType.width],
       });
       getBoundingBoxes();
     };
