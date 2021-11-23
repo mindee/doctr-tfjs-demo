@@ -82,7 +82,7 @@ and navigate with your web browser to the URL in the console.
 
 ### Using Docker container
 
-Lucky for you, if you prefer working with containers, we provide a minimal Docker image. You can build it with:
+Lucky for you, if you prefer working with containers, we provide a minimal Docker image. You can build it as follows (it might take a few minutes depending on your setup):
 ```shell
 DOCKER_BUILDKIT=1 docker build . -t doctr-tfjs:node12-alpine
 ```
@@ -90,7 +90,7 @@ and then run your image with:
 ```shell
 docker run -p 8001:3000 doctr-tfjs:node12-alpine
 ```
-Feel free to change the port, but by default, you should be able to access the demo at `http://localhost:8001/`.
+Feel free to change the port, but by default, you should be able to access the demo at `http://localhost:8001/`. *The `-p 8001:3000` lets Docker know that we want to map the internal port of the container (3000) to port 8001 on the outside.*
 
 
 ## License
