@@ -30,7 +30,7 @@ export default function Sidebar({
   return (
     <Card header="Settings" id={COMPONENT_ID} className={classes.wrapper}>
       <Box display="flex" flexDirection="column ">
-        <Typography>Select a detection model</Typography>
+        <Typography>Select a detection backbone</Typography>
         <Select
           value={detectionModelType}
           onChange={(value) => setDetectionModelType(value)}
