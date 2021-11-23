@@ -17,4 +17,4 @@ COPY ./src ./src
 
 RUN yarn build \
     && rm -r public src node_modules
-CMD [ "serve", "-s", "build"]
+CMD [ "serve", "--no-clipboard", "-s", "build"]
