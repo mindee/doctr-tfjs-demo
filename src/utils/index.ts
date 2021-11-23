@@ -193,24 +193,22 @@ export const getHeatMapFromImage = async ({
   size: number;
 }) =>
   new Promise(async (resolve) => {
-    {
-      if (!heatmapContainer && !detectionModel) {
-        return;
-      }
-
-      heatmapContainer!.width = imageObject.width;
-      heatmapContainer!.height = imageObject.height;
-      let tensor = getImageTensorForDetectionModel(imageObject, size);
-      let prediction: any = await detectionModel?.execute(tensor);
-      // @ts-ignore
-      prediction = squeeze(prediction, 0);
-      if (Array.isArray(prediction)) {
-        prediction = prediction[0];
-      }
-      // @ts-ignore
-      await browser.toPixels(prediction, heatmapContainer);
-      resolve("test");
+    if (!heatmapContainer && !detectionModel) {
+      return;
     }
+
+    heatmapContainer!.width = imageObject.width;
+    heatmapContainer!.height = imageObject.height;
+    let tensor = getImageTensorForDetectionModel(imageObject, size);
+    let prediction: any = await detectionModel?.execute(tensor);
+    // @ts-ignore
+    prediction = squeeze(prediction, 0);
+    if (Array.isArray(prediction)) {
+      prediction = prediction[0];
+    }
+    // @ts-ignore
+    await browser.toPixels(prediction, heatmapContainer);
+    resolve("test");
   });
 function clamp(number: number, size: number) {
   return Math.max(0, Math.min(number, size));
