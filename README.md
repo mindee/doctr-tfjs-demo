@@ -41,7 +41,11 @@ The interface is divided into four sections:
 
 ### Prerequisites
 
-In order to install this project, you will need [Yarn](https://classic.yarnpkg.com/lang/en/docs/install), which is a package manager for [Node.js](https://nodejs.org/en/).
+In order to install this project, you will need [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) and [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), which are package managers for [Node.js](https://nodejs.org/en/).
+
+```shell
+npm install -g serve
+```
 
 ### Installation
 
@@ -50,20 +54,43 @@ This demo was built using [React](https://reactjs.org/), a framework for JavaScr
 git clone https://github.com/mindee/doctr-tfjs-demo.git
 ```
 
-Then install the project using the following command:
+Then install the project's dependencies using the following command:
 
 ```shell
 cd doctr-tfjs-demo
 yarn install
 ```
 
-### Running the app locally
+### Running the app
+
+#### Production mode
+
+Alternatively, if you are looking at a production situation, first build the bundle and serve it:
+```shell
+yarn build
+serve --no-clipboard -s build
+```
+then navigate to the URL with your favorite web browser
+
+#### Development mode
 
 Once all dependencies have been installed, launch the app using:
 ```shell
 yarn start
 ```
-and navigate with your web browser to the URL in the console. 
+and navigate with your web browser to the URL in the console.
+
+### Using Docker container
+
+Lucky for you, if you prefer working with containers, we provide a minimal Docker image. You can build it with:
+```shell
+DOCKER_BUILDKIT=1 docker build . -t doctr-tfjs:node12-alpine
+```
+and then run your image with:
+```shell
+docker run -p 8001:3000 doctr-tfjs:node12-alpine
+```
+Feel free to change the port, but by default, you should be able to access the demo at `http://localhost:8001/`.
 
 
 ## License
