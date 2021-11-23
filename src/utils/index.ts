@@ -24,17 +24,17 @@ import {
   REC_STD,
   VOCAB,
 } from "src/common/constants";
-import { ModelType } from "src/common/types";
+import { ModelConfig } from "src/common/types";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
-  recognitionModelType,
+  recoConfig,
 }: {
   recognitionModel: MutableRefObject<GraphModel | null>;
-  recognitionModelType: ModelType;
+  recoConfig: ModelConfig;
 }) => {
   try {
-    recognitionModel.current = await loadGraphModel(recognitionModelType.path);
+    recognitionModel.current = await loadGraphModel(recoConfig.path);
   } catch (error) {
     console.log(error);
   }
@@ -42,13 +42,13 @@ export const loadRecognitionModel = async ({
 
 export const loadDetectionModel = async ({
   detectionModel,
-  detectionModelType,
+  detConfig,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
-  detectionModelType: ModelType;
+  detConfig: ModelConfig;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(detectionModelType.path);
+    detectionModel.current = await loadGraphModel(detConfig.path);
   } catch (error) {
     console.log(error);
   }

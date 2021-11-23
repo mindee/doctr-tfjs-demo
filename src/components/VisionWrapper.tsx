@@ -22,7 +22,7 @@ import {
   loadRecognitionModel,
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
-import { ModelType, UploadedFile, Word } from "../common/types";
+import { ModelConfig, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -37,13 +37,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  detectionModelType: ModelType;
-  recognitionModelType: ModelType;
+  detConfig: ModelConfig;
+  recoConfig: ModelConfig;
 }
 
 export default function VisionWrapper({
-  detectionModelType,
-  recognitionModelType,
+  detConfig,
+  recoConfig,
 }: Props): JSX.Element {
   const classes = useStyles();
 
@@ -82,8 +82,8 @@ export default function VisionWrapper({
         heatMapContainerObject.current.height
       );
     }
-    loadRecognitionModel({ recognitionModel, recognitionModelType });
-  }, [recognitionModelType]);
+    loadRecognitionModel({ recognitionModel, recoConfig });
+  }, [recoConfig]);
 
   useEffect(() => {
     setWords([]);
@@ -98,12 +98,12 @@ export default function VisionWrapper({
         heatMapContainerObject.current.height
       );
     }
-    loadDetectionModel({ detectionModel, detectionModelType });
-  }, [detectionModelType]);
+    loadDetectionModel({ detectionModel, detConfig });
+  }, [detConfig]);
 
   const getBoundingBoxes = () => {
     const boundingBoxes = extractBoundingBoxesFromHeatmap(
-      [detectionModelType.height, detectionModelType.width]
+      [detConfig.height, detConfig.width]
     );
     setAnnotationData({
       image: imageObject.current.src,
@@ -117,7 +117,7 @@ export default function VisionWrapper({
     const words = (await extractWords({
       recognitionModel: recognitionModel.current,
       stage: annotationStage.current!,
-      size: [recognitionModelType.height, recognitionModelType.width],
+      size: [recoConfig.height, recoConfig.width],
     })) as Word[];
     setWords(words);
     setExtractingWords(false);
@@ -129,7 +129,7 @@ export default function VisionWrapper({
         heatmapContainer: heatMapContainerObject.current,
         detectionModel: detectionModel.current,
         imageObject: imageObject.current,
-        size: [detectionModelType.height, detectionModelType.width],
+        size: [detConfig.height, detConfig.width],
       });
       getBoundingBoxes();
     };

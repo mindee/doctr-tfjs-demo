@@ -6,9 +6,9 @@
 import React from "react";
 import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
-import { ModelType } from "src/common/types";
+import { ModelConfig } from "src/common/types";
 import Select from "react-select";
-import { DET_MODEL_TYPE, RECO_MODEL_TYPE } from "src/common/constants";
+import { DET_CONFIG, RECO_CONFIG } from "src/common/constants";
 
 const COMPONENT_ID = "Sidebar";
 
@@ -19,16 +19,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  detectionModelType: ModelType;
-  setDetectionModelType: (value: any) => void;
-  recognitionModelType: ModelType;
-  setRecognitionModelType: (value: any) => void;
+  detConfig: ModelConfig;
+  setDetConfig: (value: any) => void;
+  recoConfig: ModelConfig;
+  setRecoConfig: (value: any) => void;
 }
 export default function Sidebar({
-  detectionModelType,
-  setDetectionModelType,
-  recognitionModelType,
-  setRecognitionModelType,
+  detConfig,
+  setDetConfig,
+  recoConfig,
+  setRecoConfig,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
@@ -36,17 +36,17 @@ export default function Sidebar({
       <Box display="flex" flexDirection="column ">
         <Typography>Text detection architecture (backbone)</Typography>
         <Select
-          value={detectionModelType}
-          onChange={(value) => setDetectionModelType(value)}
-          options={Object.values(DET_MODEL_TYPE)}
+          value={detConfig}
+          onChange={(value) => setDetConfig(value)}
+          options={Object.values(DET_CONFIG)}
         />
       </Box>
       <Box display="flex" flexDirection="column ">
         <Typography>Text recognition architecture (backbone)</Typography>
         <Select
-          value={recognitionModelType}
-          onChange={(value) => setRecognitionModelType(value)}
-          options={Object.values(RECO_MODEL_TYPE)}
+          value={recoConfig}
+          onChange={(value) => setRecoConfig(value)}
+          options={Object.values(RECO_CONFIG)}
         />
       </Box>
     </Card>

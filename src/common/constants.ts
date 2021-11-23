@@ -8,7 +8,7 @@
 export const DET_MEAN = 0.785;
 export const DET_STD = 0.275;
 
-export const DET_MODEL_TYPE = {
+export const DET_CONFIG = {
   db_mobilenet_v2: {
     value: "db_mobilenet_v2",
     label: "DB (MobileNet V2)",
@@ -30,7 +30,7 @@ export const DET_MODEL_TYPE = {
 export const REC_MEAN = 0.694;
 export const REC_STD = 0.298;
 
-export const RECO_MODEL_TYPE = {
+export const RECO_CONFIG = {
   crnn_vgg16_bn: {
     value: "crnn_vgg16_bn",
     label: "CRNN (VGG16-bn)",
@@ -40,6 +40,5 @@ export const RECO_MODEL_TYPE = {
   },
 };
 
-export const REC_SIZE = 32
 export const VOCAB =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~°àâéèêëîïôùûçÀÂÉÈËÎÏÔÙÛÇ£€¥¢฿";

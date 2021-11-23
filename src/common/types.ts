@@ -15,7 +15,7 @@ export type Word = {
   isActive?: boolean;
 };
 
-export type ModelType = {
+export type ModelConfig = {
   value: string;
   label: string;
   height: number;
