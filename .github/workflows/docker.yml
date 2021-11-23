@@ -1,0 +1,21 @@
+name: docker
+
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+
+jobs:
+  docker-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Build docker image
+        run: DOCKER_BUILDKIT=1 docker build . -t doctr-tfjs:node12-alpine
+      - name: Run docker container
+        run: docker run -d -p 8080:3000 doctr-tfjs:node12-alpine
+      - name: Check that the container accepts requests
+        run: sleep 10 && curl localhost:8080
