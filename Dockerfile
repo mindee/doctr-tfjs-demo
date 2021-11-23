@@ -8,7 +8,8 @@ RUN set -eux \
 COPY ./package.json ./
 COPY ./yarn.lock ./
 
-RUN yarn install
+RUN yarn install \
+    && yarn cache clean
 
 COPY ./tsconfig.json ./
 COPY ./.env ./
@@ -16,5 +17,6 @@ COPY ./public ./public
 COPY ./src ./src
 
 RUN yarn build \
+    && yarn cache clean \
     && rm -r public src node_modules
 CMD [ "serve", "--no-clipboard", "-s", "build"]
