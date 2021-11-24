@@ -41,7 +41,7 @@ export default function AnnotationViewer({
   const classes = useStyles();
   return (
     <Card
-      header="Detected word boxes"
+      header="Word predictions"
       id={COMPONENT_ID}
       className={classes.wrapper}
     >

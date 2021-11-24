@@ -32,7 +32,7 @@ export default function Sidebar({
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Settings" id={COMPONENT_ID} className={classes.wrapper}>
+    <Card header="Model selection" id={COMPONENT_ID} className={classes.wrapper}>
       <Box display="flex" flexDirection="column ">
         <Typography>Text detection architecture (backbone)</Typography>
         <Select
