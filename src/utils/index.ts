@@ -22,19 +22,19 @@ import {
   DET_STD,
   REC_MEAN,
   REC_STD,
-  REC_MODEL_URL,
   VOCAB,
-  REC_SIZE,
 } from "src/common/constants";
-import { DetectionModelType } from "src/common/types";
+import { ModelConfig } from "src/common/types";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
+  recoConfig,
 }: {
   recognitionModel: MutableRefObject<GraphModel | null>;
+  recoConfig: ModelConfig;
 }) => {
   try {
-    recognitionModel.current = await loadGraphModel(REC_MODEL_URL);
+    recognitionModel.current = await loadGraphModel(recoConfig.path);
   } catch (error) {
     console.log(error);
   }
@@ -42,31 +42,33 @@ export const loadRecognitionModel = async ({
 
 export const loadDetectionModel = async ({
   detectionModel,
-  detectionModelType,
+  detConfig,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
-  detectionModelType: DetectionModelType;
+  detConfig: ModelConfig;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(detectionModelType.path);
+    detectionModel.current = await loadGraphModel(detConfig.path);
   } catch (error) {
     console.log(error);
   }
 };
 
 export const getImageTensorForRecognitionModel = (
-  imageObject: HTMLImageElement
+  imageObject: HTMLImageElement,
+  size: [number, number]
 ) => {
   let h = imageObject.height
   let w = imageObject.width
   let resize_target: any
   let padding_target: any
-  if (4 * h > w) {
-      resize_target = [REC_SIZE, Math.round(REC_SIZE * w / h)];
-      padding_target = [[0, 0], [0, 4 * REC_SIZE - Math.round(REC_SIZE * w / h)], [0, 0]];
+  let aspect_ratio = size[1] / size[0]
+  if (aspect_ratio * h > w) {
+      resize_target = [size[0], Math.round(size[0] * w / h)];
+      padding_target = [[0, 0], [0, size[1] - Math.round(size[0] * w / h)], [0, 0]];
   } else {
-      resize_target = [Math.round(4 * REC_SIZE * h / w), 4 * REC_SIZE];
-      padding_target = [[0, REC_SIZE - Math.round(4 * REC_SIZE * h / w)], [0, 0], [0, 0]];
+      resize_target = [Math.round(size[1] * h / w), size[1]];
+      padding_target = [[0, size[0] - Math.round(size[1] * h / w)], [0, 0], [0, 0]];
   }
   let tensor = browser
     .fromPixels(imageObject)
@@ -80,11 +82,11 @@ export const getImageTensorForRecognitionModel = (
 
 export const getImageTensorForDetectionModel = (
   imageObject: HTMLImageElement,
-  size: number
+  size: [number, number]
 ) => {
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([size, size])
+    .resizeNearestNeighbor(size)
     .toFloat();
   let mean = scalar(255 * DET_MEAN);
   let std = scalar(255 * DET_STD);
@@ -94,9 +96,11 @@ export const getImageTensorForDetectionModel = (
 export const extractWords = async ({
   recognitionModel,
   stage,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   stage: Stage;
+  size: [number, number];
 }) => {
   const crops = (await getCrops({ stage })) as Array<{
     id: string;
@@ -113,6 +117,7 @@ export const extractWords = async ({
             const words = await extractWordsFromCrop({
               recognitionModel,
               imageObject,
+              size,
             });
             resolve({ id: crop.id, words, color: crop.color });
           };
@@ -149,14 +154,16 @@ const getCrops = ({ stage }: { stage: Stage }) => {
 export const extractWordsFromCrop = async ({
   recognitionModel,
   imageObject,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   imageObject: HTMLImageElement;
+  size: [number, number];
 }) => {
   if (!recognitionModel) {
     return;
   }
-  let tensor = getImageTensorForRecognitionModel(imageObject);
+  let tensor = getImageTensorForRecognitionModel(imageObject, size);
   let predictions = await recognitionModel.executeAsync(tensor);
   // @ts-ignore
   let probabilities = softmax(predictions, -1);
@@ -190,7 +197,7 @@ export const getHeatMapFromImage = async ({
   detectionModel: GraphModel | null;
   heatmapContainer: HTMLCanvasElement | null;
   imageObject: HTMLImageElement;
-  size: number;
+  size: [number, number];
 }) =>
   new Promise(async (resolve) => {
     if (!heatmapContainer && !detectionModel) {
@@ -216,30 +223,30 @@ function clamp(number: number, size: number) {
 
 export const transformBoundingBox = (
   contour: any,
-  size: number
+  size: [number, number]
 ): AnnotationShape => {
   let offset =
     (contour.width * contour.height * 1.5) /
     (2 * (contour.width + contour.height));
-  const p1 = clamp(contour.x - offset, size);
-  const p2 = clamp(p1 + contour.width + 2 * offset, size);
-  const p3 = clamp(contour.y - offset, size);
-  const p4 = clamp(p3 + contour.height + 2 * offset, size);
+  const p1 = clamp(contour.x - offset, size[1]);
+  const p2 = clamp(p1 + contour.width + 2 * offset, size[1]);
+  const p3 = clamp(contour.y - offset, size[0]);
+  const p4 = clamp(p3 + contour.height + 2 * offset, size[0]);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     config: {
       stroke: randomColor(),
     },
     coordinates: [
-      [p1 / size, p3 / size],
-      [p2 / size, p3 / size],
-      [p2 / size, p4 / size],
-      [p1 / size, p4 / size],
+      [p1 / size[1], p3 / size[0]],
+      [p2 / size[1], p3 / size[0]],
+      [p2 / size[1], p4 / size[0]],
+      [p1 / size[1], p4 / size[0]],
     ],
   };
 };
 
-export const extractBoundingBoxesFromHeatmap = (size: number) => {
+export const extractBoundingBoxesFromHeatmap = (size: [number, number]) => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);
