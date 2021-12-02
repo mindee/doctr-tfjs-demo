@@ -16,13 +16,6 @@ export const DET_CONFIG = {
     width: 512,
     path: "models/db_mobilenet_v2/model.json",
   },
-  db_resnet50: {
-    value: "db_resnet50",
-    label: "DB (ResNet-50)",
-    height: 1024,
-    width: 1024,
-    path: "models/db_resnet50/model.json",
-  },
 };
 
 // Recognition cfg
