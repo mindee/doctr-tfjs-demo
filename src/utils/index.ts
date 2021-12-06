@@ -63,26 +63,6 @@ export const getImageTensorForRecognitionModel = (
 ) => {
   console.log(size);
   const list = crops.map((imageObject) => {
-    // let h = imageObject.height;
-    // let w = imageObject.width;
-    // let resize_target: any;
-    // let padding_target: any;
-    // let aspect_ratio = size[1] / size[0];
-    // if (aspect_ratio * h > w) {
-    //   resize_target = [size[0], Math.round((size[0] * w) / h)];
-    //   padding_target = [
-    //     [0, 0],
-    //     [0, size[1] - Math.round((size[0] * w) / h)],
-    //     [0, 0],
-    //   ];
-    // } else {
-    //   resize_target = [Math.round((size[1] * h) / w), size[1]];
-    //   padding_target = [
-    //     [0, size[0] - Math.round((size[1] * h) / w)],
-    //     [0, 0],
-    //     [0, 0],
-    //   ];
-    // }
     return browser
       .fromPixels(imageObject)
       .resizeNearestNeighbor([32, 128])
@@ -199,9 +179,9 @@ export const extractWordsFromCrop = async ({
   if (!recognitionModel) {
     return;
   }
-  console.log("before tensor");
+  console.log("before batching");
   let tensor = getImageTensorForRecognitionModel(crops, size);
-  console.log("after tensor", tensor);
+  console.log("after batching");
   let predictions = await recognitionModel.executeAsync(tensor);
 
   //  @ts-ignore
