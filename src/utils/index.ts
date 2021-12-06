@@ -15,8 +15,6 @@ import {
   squeeze,
   unstack,
 } from "@tensorflow/tfjs";
-// @ts-ignore
-import combineImage from "merge-images";
 import { Layer } from "konva/lib/Layer";
 import randomColor from "randomcolor";
 import { MutableRefObject } from "react";
@@ -26,19 +24,20 @@ import {
   DET_STD,
   REC_MEAN,
   REC_STD,
-  REC_MODEL_URL,
   VOCAB,
 } from "src/common/constants";
-import { DetectionModelType } from "src/common/types";
+import { ModelConfig } from "src/common/types";
 import { chunk } from "underscore";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
+  recoConfig,
 }: {
   recognitionModel: MutableRefObject<GraphModel | null>;
+  recoConfig: ModelConfig;
 }) => {
   try {
-    recognitionModel.current = await loadGraphModel(REC_MODEL_URL);
+    recognitionModel.current = await loadGraphModel(recoConfig.path);
   } catch (error) {
     console.log(error);
   }
@@ -46,22 +45,46 @@ export const loadRecognitionModel = async ({
 
 export const loadDetectionModel = async ({
   detectionModel,
-  detectionModelType,
+  detConfig,
 }: {
   detectionModel: MutableRefObject<GraphModel | null>;
-  detectionModelType: DetectionModelType;
+  detConfig: ModelConfig;
 }) => {
   try {
-    detectionModel.current = await loadGraphModel(detectionModelType.path);
+    detectionModel.current = await loadGraphModel(detConfig.path);
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getImageTensorForRecognitionModel = (crops: any) => {
-  const list = crops.map((crop: any) => {
+export const getImageTensorForRecognitionModel = (
+  crops: HTMLImageElement[],
+  size: [number, number]
+) => {
+  console.log(size);
+  const list = crops.map((imageObject) => {
+    // let h = imageObject.height;
+    // let w = imageObject.width;
+    // let resize_target: any;
+    // let padding_target: any;
+    // let aspect_ratio = size[1] / size[0];
+    // if (aspect_ratio * h > w) {
+    //   resize_target = [size[0], Math.round((size[0] * w) / h)];
+    //   padding_target = [
+    //     [0, 0],
+    //     [0, size[1] - Math.round((size[0] * w) / h)],
+    //     [0, 0],
+    //   ];
+    // } else {
+    //   resize_target = [Math.round((size[1] * h) / w), size[1]];
+    //   padding_target = [
+    //     [0, size[0] - Math.round((size[1] * h) / w)],
+    //     [0, 0],
+    //     [0, 0],
+    //   ];
+    // }
     return browser
-      .fromPixels(crop.crop)
+      .fromPixels(imageObject)
       .resizeNearestNeighbor([32, 128])
       .toFloat()
       .expandDims();
@@ -74,11 +97,11 @@ export const getImageTensorForRecognitionModel = (crops: any) => {
 
 export const getImageTensorForDetectionModel = (
   imageObject: HTMLImageElement,
-  size: number
+  size: [number, number]
 ) => {
   let tensor = browser
     .fromPixels(imageObject)
-    .resizeNearestNeighbor([size, size])
+    .resizeNearestNeighbor(size)
     .toFloat();
   let mean = scalar(255 * DET_MEAN);
   let std = scalar(255 * DET_STD);
@@ -88,26 +111,32 @@ export const getImageTensorForDetectionModel = (
 export const extractWords = async ({
   recognitionModel,
   stage,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   stage: Stage;
+  size: [number, number];
 }) => {
   const crops = (await getCrops({ stage })) as Array<{
     id: string;
     crop: HTMLImageElement;
     color: string;
   }>;
-  const chunks = chunk(crops, 64);
+  const chunks = chunk(crops, 16);
   return Promise.all(
-    [chunks[0]].map(
+    chunks.map(
       (chunk) =>
         new Promise(async (resolve) => {
           const words = await extractWordsFromCrop({
             recognitionModel,
-            crops: chunk,
+            crops: chunk.map((elem) => elem.crop),
+            size,
           });
-          console.log(words);
-          //   resolve({ id: crop.id, words, color: crop.color });
+          const collection = words?.map((word, index) => ({
+            ...chunk[index],
+            words: word ? [word] : [],
+          }));
+          resolve(collection);
         })
     )
   );
@@ -134,7 +163,7 @@ export const dataURItoBlob = (dataURI: string) => {
   return new Blob([ia], { type: mimeString });
 };
 
-const getCrops = ({ stage }: { stage: Stage }) => {
+export const getCrops = ({ stage }: { stage: Stage }) => {
   const layer = stage.findOne<Layer>("#shapes-layer");
   const polygons = layer.find(".shape");
   return Promise.all(
@@ -145,7 +174,7 @@ const getCrops = ({ stage }: { stage: Stage }) => {
           ...clientRect,
           quality: 1,
           pixelRatio: 3,
-          callback: (value: any) => {
+          callback: (value: HTMLImageElement) => {
             resolve({
               id: polygon.id(),
               crop: value,
@@ -161,16 +190,18 @@ const getCrops = ({ stage }: { stage: Stage }) => {
 export const extractWordsFromCrop = async ({
   recognitionModel,
   crops,
+  size,
 }: {
   recognitionModel: GraphModel | null;
   crops: any;
+  size: [number, number];
 }) => {
   if (!recognitionModel) {
     return;
   }
   console.log("before tensor");
-  let tensor = getImageTensorForRecognitionModel(crops);
-  console.log("after tensor");
+  let tensor = getImageTensorForRecognitionModel(crops, size);
+  console.log("after tensor", tensor);
   let predictions = await recognitionModel.executeAsync(tensor);
 
   //  @ts-ignore
@@ -208,27 +239,25 @@ export const getHeatMapFromImage = async ({
   detectionModel: GraphModel | null;
   heatmapContainer: HTMLCanvasElement | null;
   imageObject: HTMLImageElement;
-  size: number;
+  size: [number, number];
 }) =>
   new Promise(async (resolve) => {
-    {
-      if (!heatmapContainer && !detectionModel) {
-        return;
-      }
-
-      heatmapContainer!.width = imageObject.width;
-      heatmapContainer!.height = imageObject.height;
-      let tensor = getImageTensorForDetectionModel(imageObject, size);
-      let prediction: any = await detectionModel?.execute(tensor);
-      // @ts-ignore
-      prediction = squeeze(prediction, 0);
-      if (Array.isArray(prediction)) {
-        prediction = prediction[0];
-      }
-      // @ts-ignore
-      await browser.toPixels(prediction, heatmapContainer);
-      resolve("test");
+    if (!heatmapContainer && !detectionModel) {
+      return;
     }
+
+    heatmapContainer!.width = imageObject.width;
+    heatmapContainer!.height = imageObject.height;
+    let tensor = getImageTensorForDetectionModel(imageObject, size);
+    let prediction: any = await detectionModel?.execute(tensor);
+    // @ts-ignore
+    prediction = squeeze(prediction, 0);
+    if (Array.isArray(prediction)) {
+      prediction = prediction[0];
+    }
+    // @ts-ignore
+    await browser.toPixels(prediction, heatmapContainer);
+    resolve("test");
   });
 function clamp(number: number, size: number) {
   return Math.max(0, Math.min(number, size));
@@ -236,30 +265,30 @@ function clamp(number: number, size: number) {
 
 export const transformBoundingBox = (
   contour: any,
-  size: number
+  size: [number, number]
 ): AnnotationShape => {
   let offset =
     (contour.width * contour.height * 1.5) /
     (2 * (contour.width + contour.height));
-  const p1 = clamp(contour.x - offset, size);
-  const p2 = clamp(p1 + contour.width + 2 * offset, size);
-  const p3 = clamp(contour.y - offset, size);
-  const p4 = clamp(p3 + contour.height + 2 * offset, size);
+  const p1 = clamp(contour.x - offset, size[1]);
+  const p2 = clamp(p1 + contour.width + 2 * offset, size[1]);
+  const p3 = clamp(contour.y - offset, size[0]);
+  const p4 = clamp(p3 + contour.height + 2 * offset, size[0]);
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     config: {
       stroke: randomColor(),
     },
     coordinates: [
-      [p1 / size, p3 / size],
-      [p2 / size, p3 / size],
-      [p2 / size, p4 / size],
-      [p1 / size, p4 / size],
+      [p1 / size[1], p3 / size[0]],
+      [p2 / size[1], p3 / size[0]],
+      [p2 / size[1], p4 / size[0]],
+      [p1 / size[1], p4 / size[0]],
     ],
   };
 };
 
-export const extractBoundingBoxesFromHeatmap = (size: number) => {
+export const extractBoundingBoxesFromHeatmap = (size: [number, number]) => {
   let src = cv.imread("heatmap");
   cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
   cv.threshold(src, src, 77, 255, cv.THRESH_BINARY);

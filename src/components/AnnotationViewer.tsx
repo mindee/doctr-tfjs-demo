@@ -3,7 +3,7 @@
 // This program is licensed under the Apache License version 2.
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import { makeStyles, Theme } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
 import {
   AnnotationData,
@@ -41,7 +41,7 @@ export default function AnnotationViewer({
   const classes = useStyles();
   return (
     <Card
-      header="Detected word boxes"
+      header="Word predictions"
       id={COMPONENT_ID}
       className={classes.wrapper}
     >

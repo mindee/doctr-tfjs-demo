@@ -5,7 +5,6 @@
 
 import React from "react";
 import {
-  Box,
   CircularProgress,
   Grid,
   makeStyles,
@@ -56,7 +55,7 @@ export default function WordsList({
   const classes = useStyles();
   return (
     <Card
-      header={`Words ${words.length ? `(${words.length})` : ""}`}
+      header={`Words values ${words.length ? `(${words.length})` : ""}`}
       id={COMPONENT_ID}
       className={classes.wrapper}
     >
