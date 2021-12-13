@@ -32,13 +32,13 @@ export const REC_STD = 0.298;
 
 export const RECO_CONFIG = {
   crnn_vgg16_bn: {
-    value: "crnn_vgg16_bn",
-    label: "CRNN (VGG16-bn)",
+    value: "crnn_mobilenet_v2",
+    label: "CRNN (MobileNet V2)",
     height: 32,
     width: 128,
-    path: "models/crnn_vgg16_bn/model.json",
+    path: "models/crnn_mobilenet_v2/model.json",
   },
 };
 
 export const VOCAB =
-  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~°àâéèêëîïôùûçÀÂÉÈËÎÏÔÙÛÇ£€¥¢฿";
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~°£€¥¢฿àâéèêëîïôùûüçÀÂÉÈÊËÎÏÔÙÛÜÇ";

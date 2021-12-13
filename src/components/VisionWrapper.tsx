@@ -22,6 +22,7 @@ import {
   loadRecognitionModel,
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
+import { flatten } from "underscore";
 import { ModelConfig, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
@@ -102,9 +103,10 @@ export default function VisionWrapper({
   }, [detConfig]);
 
   const getBoundingBoxes = () => {
-    const boundingBoxes = extractBoundingBoxesFromHeatmap(
-      [detConfig.height, detConfig.width]
-    );
+    const boundingBoxes = extractBoundingBoxesFromHeatmap([
+      detConfig.height,
+      detConfig.width,
+    ]);
     setAnnotationData({
       image: imageObject.current.src,
       shapes: boundingBoxes,
@@ -119,7 +121,7 @@ export default function VisionWrapper({
       stage: annotationStage.current!,
       size: [recoConfig.height, recoConfig.width],
     })) as Word[];
-    setWords(words);
+    setWords(flatten(words));
     setExtractingWords(false);
   };
 
