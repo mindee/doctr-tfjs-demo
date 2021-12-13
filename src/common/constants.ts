@@ -33,7 +33,7 @@ export const REC_STD = 0.298;
 export const RECO_CONFIG = {
   crnn_vgg16_bn: {
     value: "crnn_mobilenet_v2",
-    label: "CRNN (mobilenet-v2)",
+    label: "CRNN (MobileNet V2)",
     height: 32,
     width: 128,
     path: "models/crnn_mobilenet_v2/model.json",
