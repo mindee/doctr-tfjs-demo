@@ -114,7 +114,7 @@ export const extractWords = async ({
     crop: HTMLImageElement;
     color: string;
   }>;
-  const chunks = chunk(crops, 16);
+  const chunks = chunk(crops, 32);
   return Promise.all(
     chunks.map(
       (chunk) =>
@@ -165,7 +165,7 @@ export const getCrops = ({ stage }: { stage: Stage }) => {
         stage.toImage({
           ...clientRect,
           quality: 1,
-          pixelRatio: 3,
+          pixelRatio: 10,
           callback: (value: HTMLImageElement) => {
             resolve({
               id: polygon.id(),
