@@ -7,11 +7,13 @@ import cv from "@techstark/opencv-js";
 import {
   argMax,
   browser,
+  concat,
   GraphModel,
   loadGraphModel,
   scalar,
   softmax,
   squeeze,
+  unstack,
 } from "@tensorflow/tfjs";
 import { Layer } from "konva/lib/Layer";
 import randomColor from "randomcolor";
@@ -25,6 +27,7 @@ import {
   VOCAB,
 } from "src/common/constants";
 import { ModelConfig } from "src/common/types";
+import { chunk } from "underscore";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -55,29 +58,33 @@ export const loadDetectionModel = async ({
 };
 
 export const getImageTensorForRecognitionModel = (
-  imageObject: HTMLImageElement,
+  crops: HTMLImageElement[],
   size: [number, number]
 ) => {
-  let h = imageObject.height
-  let w = imageObject.width
-  let resize_target: any
-  let padding_target: any
-  let aspect_ratio = size[1] / size[0]
-  if (aspect_ratio * h > w) {
-      resize_target = [size[0], Math.round(size[0] * w / h)];
-      padding_target = [[0, 0], [0, size[1] - Math.round(size[0] * w / h)], [0, 0]];
-  } else {
-      resize_target = [Math.round(size[1] * h / w), size[1]];
-      padding_target = [[0, size[0] - Math.round(size[1] * h / w)], [0, 0], [0, 0]];
-  }
-  let tensor = browser
-    .fromPixels(imageObject)
-    .resizeNearestNeighbor(resize_target)
-    .pad(padding_target, 0)
-    .toFloat();
+  const list = crops.map((imageObject) => {
+    let h = imageObject.height
+    let w = imageObject.width
+    let resize_target: any
+    let padding_target: any
+    let aspect_ratio = size[1] / size[0]
+    if (aspect_ratio * h > w) {
+        resize_target = [size[0], Math.round(size[0] * w / h)];
+        padding_target = [[0, 0], [0, size[1] - Math.round(size[0] * w / h)], [0, 0]];
+    } else {
+        resize_target = [Math.round(size[1] * h / w), size[1]];
+        padding_target = [[0, size[0] - Math.round(size[1] * h / w)], [0, 0], [0, 0]];
+    }
+    return browser
+      .fromPixels(imageObject)
+      .resizeNearestNeighbor(resize_target)
+      .pad(padding_target, 0)
+      .toFloat()
+      .expandDims();
+  });
+  const tensor = concat(list);
   let mean = scalar(255 * REC_MEAN);
   let std = scalar(255 * REC_STD);
-  return tensor.sub(mean).div(std).expandDims();
+  return tensor.sub(mean).div(std);
 };
 
 export const getImageTensorForDetectionModel = (
@@ -104,41 +111,62 @@ export const extractWords = async ({
 }) => {
   const crops = (await getCrops({ stage })) as Array<{
     id: string;
-    crop: string;
+    crop: HTMLImageElement;
     color: string;
   }>;
-
+  const chunks = chunk(crops, 32);
   return Promise.all(
-    crops.map(
-      (crop) =>
-        new Promise((resolve) => {
-          const imageObject = new Image();
-          imageObject.onload = async () => {
-            const words = await extractWordsFromCrop({
-              recognitionModel,
-              imageObject,
-              size,
-            });
-            resolve({ id: crop.id, words, color: crop.color });
-          };
-          imageObject.src = crop.crop;
+    chunks.map(
+      (chunk) =>
+        new Promise(async (resolve) => {
+          const words = await extractWordsFromCrop({
+            recognitionModel,
+            crops: chunk.map((elem) => elem.crop),
+            size,
+          });
+          const collection = words?.map((word, index) => ({
+            ...chunk[index],
+            words: word ? [word] : [],
+          }));
+          resolve(collection);
         })
     )
   );
 };
 
-const getCrops = ({ stage }: { stage: Stage }) => {
+export const dataURItoBlob = (dataURI: string) => {
+  let byteString;
+  const splitDataURL = dataURI.split(",");
+  if (splitDataURL[0].indexOf("base64") >= 0) {
+    // atob decodes base64 data
+    byteString = atob(splitDataURL[1]);
+  } else {
+    byteString = decodeURI(dataURI.split(",")[1]);
+  }
+
+  const mimeString = splitDataURL[0].split(":")[1].split(";")[0];
+
+  // write the bytes of the string to a typed array
+  const ia = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], { type: mimeString });
+};
+
+export const getCrops = ({ stage }: { stage: Stage }) => {
   const layer = stage.findOne<Layer>("#shapes-layer");
   const polygons = layer.find(".shape");
   return Promise.all(
     polygons.map((polygon) => {
       const clientRect = polygon.getClientRect();
       return new Promise((resolve) => {
-        stage.toDataURL({
+        stage.toImage({
           ...clientRect,
           quality: 1,
           pixelRatio: 10,
-          callback: (value: string) => {
+          callback: (value: HTMLImageElement) => {
             resolve({
               id: polygon.id(),
               crop: value,
@@ -153,22 +181,24 @@ const getCrops = ({ stage }: { stage: Stage }) => {
 
 export const extractWordsFromCrop = async ({
   recognitionModel,
-  imageObject,
+  crops,
   size,
 }: {
   recognitionModel: GraphModel | null;
-  imageObject: HTMLImageElement;
+  crops: any;
   size: [number, number];
 }) => {
   if (!recognitionModel) {
     return;
   }
-  let tensor = getImageTensorForRecognitionModel(imageObject, size);
+  let tensor = getImageTensorForRecognitionModel(crops, size);
   let predictions = await recognitionModel.executeAsync(tensor);
+
+  //  @ts-ignore
   // @ts-ignore
   let probabilities = softmax(predictions, -1);
-  let bestPath = [argMax(probabilities, -1)];
-  let blank = 123;
+  let bestPath = unstack(argMax(probabilities, -1), 0);
+  let blank = 126;
   var words = [];
   for (const sequence of bestPath) {
     let collapsed = "";
