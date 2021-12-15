@@ -32,22 +32,35 @@ export default function Sidebar({
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Model selection" id={COMPONENT_ID} className={classes.wrapper}>
-      <Box display="flex" flexDirection="column ">
-        <Typography>Text detection architecture (backbone)</Typography>
-        <Select
-          value={detConfig}
-          onChange={(value) => setDetConfig(value)}
-          options={Object.values(DET_CONFIG)}
-        />
-      </Box>
-      <Box display="flex" flexDirection="column ">
-        <Typography>Text recognition architecture (backbone)</Typography>
-        <Select
-          value={recoConfig}
-          onChange={(value) => setRecoConfig(value)}
-          options={Object.values(RECO_CONFIG)}
-        />
+    <Card
+      header="Model selection"
+      id={COMPONENT_ID}
+      className={classes.wrapper}
+    >
+      <Box
+        display={"flex"}
+        flexDirection="column"
+        style={{
+          rowGap: 20,
+        }}
+      >
+        <Box display="flex" flexDirection="column ">
+          <Typography>Text detection architecture (backbone)</Typography>
+          <Select
+            value={detConfig}
+            onChange={(value) => setDetConfig(value)}
+            options={Object.values(DET_CONFIG)}
+          />
+        </Box>
+        <Box display="flex" flexDirection="column ">
+          <Typography>Text recognition architecture (backbone)</Typography>
+          <Select
+            value={recoConfig}
+            onChange={(value) => setRecoConfig(value)}
+            options={Object.values(RECO_CONFIG)}
+          />
+        </Box>
+        <Box mt="30px" id="upload-container"></Box>
       </Box>
     </Card>
   );

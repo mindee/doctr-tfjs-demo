@@ -3,31 +3,30 @@
 // This program is licensed under the Apache License version 2.
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
-import { Box, colors, makeStyles, Theme } from "@material-ui/core";
+import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
 import Uploader from "./Uploader";
 import { UploadedFile } from "../common/types";
-import { Card } from "@mindee/web-elements.ui.card";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+
+import placeholder from "../assets/placeholder.jpg";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {},
   image: {
-    height: "100%",
+    height: 200,
     width: "100%",
     objectFit: "contain",
   },
   placeholder: {
     border: `1px solid ${theme.palette.grey[200]}`,
     height: 200,
-    width: "100%",
     borderRadius: 8,
+    objectFit: "contain",
     cursor: "pointer",
   },
 }));
 
 interface Props {
-  uploadedImage: string;
+  uploadedImage: any;
   onUpload: (file: UploadedFile) => void;
 }
 
@@ -36,26 +35,26 @@ export default function ImageViewer({
   uploadedImage,
 }: Props): JSX.Element {
   const classes = useStyles();
+  console.log(uploadedImage.src);
   return (
-    <Card header="Input image" className={classes.wrapper}>
-      <Uploader style={{ height: "35vh" }} onUpload={onUpload}>
-        {uploadedImage ? (
-          <img alt="viewer" className={classes.image} src={uploadedImage} />
+    <Box className={classes.wrapper}>
+      <Typography paragraph variant="h2">
+        Image
+      </Typography>
+      <Uploader
+        style={{ height: "35vh", justifyContent: "center" }}
+        onUpload={onUpload}
+      >
+        {uploadedImage.width ? (
+          <img alt="viewer" className={classes.image} src={uploadedImage.src} />
         ) : (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
+          <img
+            alt="placeholder"
+            src={placeholder}
             className={classes.placeholder}
-          >
-            <FontAwesomeIcon
-              color={colors.grey[300]}
-              size="6x"
-              icon={faUpload}
-            />
-          </Box>
+          />
         )}
       </Uploader>
-    </Card>
+    </Box>
   );
 }

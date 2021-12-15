@@ -3,7 +3,7 @@
 // This program is licensed under the Apache License version 2.
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
-import { Grid, makeStyles, Theme } from "@material-ui/core";
+import { Grid, makeStyles, Portal, Theme } from "@material-ui/core";
 import { GraphModel } from "@tensorflow/tfjs";
 import { createRef, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -32,9 +32,7 @@ import WordsList from "./WordsList";
 const COMPONENT_ID = "VisionWrapper";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: "100%",
-  },
+  wrapper: {},
 }));
 
 interface Props {
@@ -185,6 +183,7 @@ export default function VisionWrapper({
       });
     }
   };
+  const uploadContainer = document.getElementById("upload-container");
   return (
     <Grid
       spacing={2}
@@ -193,15 +192,11 @@ export default function VisionWrapper({
       id={COMPONENT_ID}
       container
     >
-      <Grid item xs={6}>
-        <ImageViewer
-          uploadedImage={imageObject.current.src}
-          onUpload={onUpload}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <HeatMap heatMapContainerRef={heatMapContainerObject} />
-      </Grid>
+      <Portal container={uploadContainer}>
+        <ImageViewer uploadedImage={imageObject.current} onUpload={onUpload} />
+      </Portal>
+      <HeatMap heatMapContainerRef={heatMapContainerObject} />
+
       <Grid item xs={6}>
         <AnnotationViewer
           setAnnotationStage={setAnnotationStage}

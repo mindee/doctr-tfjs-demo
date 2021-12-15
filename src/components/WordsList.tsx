@@ -17,12 +17,10 @@ import { Word } from "src/common/types";
 const COMPONENT_ID = "WordsList";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: "45vh",
-  },
+  wrapper: {},
   list: {
     overflow: "hidden auto",
-    height: "35vh",
+    height: "80vh",
   },
   item: {
     cursor: "pointer",

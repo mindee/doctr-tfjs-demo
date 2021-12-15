@@ -14,9 +14,7 @@ import {
 const COMPONENT_ID = "AnnotationViewer";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: "45vh",
-  },
+  wrapper: {},
   image: {
     height: "100%",
     width: "100%",
@@ -51,7 +49,7 @@ export default function AnnotationViewer({
         onShapeClick={onShapeClick}
         data={annotationData}
         getStage={setAnnotationStage}
-        style={{ height: "35vh", width: "100%", background: "white" }}
+        style={{ height: "80vh", width: "100%", background: "white" }}
       />
     </Card>
   );
