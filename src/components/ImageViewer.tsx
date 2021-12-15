@@ -35,7 +35,6 @@ export default function ImageViewer({
   uploadedImage,
 }: Props): JSX.Element {
   const classes = useStyles();
-  console.log(uploadedImage.src);
   return (
     <Box className={classes.wrapper}>
       <Typography paragraph variant="h2">
