@@ -4,42 +4,43 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
 import { Grid, makeStyles, Theme } from "@material-ui/core";
-import { useState } from "react";
-import { DET_CONFIG, RECO_CONFIG } from "./common/constants";
-import Sidebar from "./components/Sidebar";
+import { COLORS } from "@mindee/web-elements.assets";
+import PageFooter from "./components/PageFooter";
+import PageHeader from "./components/PageHeader";
 import VisionWrapper from "./components/VisionWrapper";
+import WelcomeMessage from "./components/WelcomeMessage";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     height: "100vh",
     width: "100%",
-    background: theme.palette.grey[50],
+  },
+  content: {
+    background: COLORS.background,
+    paddingLeft: 42,
+    paddingRight: 42,
+    paddingTop: 20,
   },
 }));
 
 function App() {
   const classes = useStyles();
-  const [detConfig, setDetConfig] = useState(
-    DET_CONFIG.db_mobilenet_v2
-  );
-  const [recoConfig, setRecoConfig] = useState(
-    RECO_CONFIG.crnn_vgg16_bn
-  );
+
   return (
-    <Grid className={classes.wrapper} container spacing={2}>
-      <Grid item xs={3}>
-        <Sidebar
-          detConfig={detConfig}
-          setDetConfig={setDetConfig}
-          recoConfig={recoConfig}
-          setRecoConfig={setRecoConfig}
-        />
+    <Grid className={classes.wrapper} container>
+      <Grid item xs={12}>
+        <PageHeader />
       </Grid>
-      <Grid item xs={9}>
-        <VisionWrapper
-          detConfig={detConfig}
-          recoConfig={recoConfig}
-        />
+      <Grid spacing={1} className={classes.content} item container xs={12}>
+        <Grid item xs={12}>
+          <WelcomeMessage />
+        </Grid>
+        <Grid item xs={12}>
+          <VisionWrapper />
+        </Grid>
+        <Grid item xs={12}>
+          <PageFooter />
+        </Grid>
       </Grid>
     </Grid>
   );

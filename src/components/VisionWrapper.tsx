@@ -14,6 +14,7 @@ import {
   setShapeConfig,
   Stage,
 } from "react-mindee-js";
+import { DET_CONFIG, RECO_CONFIG } from "src/common/constants";
 import {
   extractBoundingBoxesFromHeatmap,
   extractWords,
@@ -27,24 +28,21 @@ import { ModelConfig, UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
+import Sidebar from "./Sidebar";
 import WordsList from "./WordsList";
 
 const COMPONENT_ID = "VisionWrapper";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {},
+  wrapper: {
+    height: "100%",
+  },
 }));
 
-interface Props {
-  detConfig: ModelConfig;
-  recoConfig: ModelConfig;
-}
-
-export default function VisionWrapper({
-  detConfig,
-  recoConfig,
-}: Props): JSX.Element {
+export default function VisionWrapper(): JSX.Element {
   const classes = useStyles();
+  const [detConfig, setDetConfig] = useState(DET_CONFIG.db_mobilenet_v2);
+  const [recoConfig, setRecoConfig] = useState(RECO_CONFIG.crnn_vgg16_bn);
 
   const recognitionModel = useRef<GraphModel | null>(null);
   const detectionModel = useRef<GraphModel | null>(null);
@@ -186,7 +184,7 @@ export default function VisionWrapper({
   const uploadContainer = document.getElementById("upload-container");
   return (
     <Grid
-      spacing={2}
+      spacing={3}
       className={classes.wrapper}
       item
       id={COMPONENT_ID}
@@ -196,8 +194,15 @@ export default function VisionWrapper({
         <ImageViewer uploadedImage={imageObject.current} onUpload={onUpload} />
       </Portal>
       <HeatMap heatMapContainerRef={heatMapContainerObject} />
-
-      <Grid item xs={6}>
+      <Grid item xs={3}>
+        <Sidebar
+          detConfig={detConfig}
+          setDetConfig={setDetConfig}
+          recoConfig={recoConfig}
+          setRecoConfig={setRecoConfig}
+        />
+      </Grid>
+      <Grid item xs={5}>
         <AnnotationViewer
           setAnnotationStage={setAnnotationStage}
           annotationData={annotationData}
@@ -206,7 +211,7 @@ export default function VisionWrapper({
           onShapeClick={onShapeClick}
         />
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={4}>
         <WordsList
           fieldRefsObject={fieldRefsObject.current}
           onFieldMouseLeave={onFieldMouseLeave}

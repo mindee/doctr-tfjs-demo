@@ -2,7 +2,7 @@
 
 // This program is licensed under the Apache License version 2.
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
-
+import "./style.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
@@ -11,7 +11,7 @@ import { ThemeWrapper } from "@mindee/web-elements.ui.theme-wrapper";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeWrapper>
+    <ThemeWrapper style={{ padding: 0, color: "#001E3C" }}>
       <App />
     </ThemeWrapper>
   </React.StrictMode>,

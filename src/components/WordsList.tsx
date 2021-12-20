@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
 import { Word } from "src/common/types";
+import { FONTS } from "@mindee/web-elements.assets";
 
 const COMPONENT_ID = "WordsList";
 
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {},
   list: {
     overflow: "hidden auto",
-    height: "80vh",
+    height: "52vh",
   },
   item: {
     cursor: "pointer",
@@ -53,7 +54,16 @@ export default function WordsList({
   const classes = useStyles();
   return (
     <Card
-      header={`Words values ${words.length ? `(${words.length})` : ""}`}
+      topBar
+      header={
+        <Typography
+          style={{ fontFamily: FONTS.bold }}
+          paragraph
+          variant="subtitle1"
+        >
+          4 Visualize word values {words.length ? `(${words.length})` : ""}
+        </Typography>
+      }
       id={COMPONENT_ID}
       className={classes.wrapper}
     >

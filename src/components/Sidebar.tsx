@@ -7,14 +7,16 @@ import React from "react";
 import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
 import { ModelConfig } from "src/common/types";
-import Select from "react-select";
+import { SelectInput } from "@mindee/web-elements.ui.select-input";
 import { DET_CONFIG, RECO_CONFIG } from "src/common/constants";
+import { FONTS } from "@mindee/web-elements.assets";
 
 const COMPONENT_ID = "Sidebar";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: "95vh",
+  wrapper: {},
+  item: {
+    rowGap: 5,
   },
 }));
 
@@ -33,7 +35,19 @@ export default function Sidebar({
   const classes = useStyles();
   return (
     <Card
-      header="Model selection"
+      topBar
+      header={
+        <Typography
+          style={{ fontFamily: FONTS.bold }}
+          paragraph
+          variant="subtitle1"
+        >
+          1 Select a Model
+        </Typography>
+      }
+      contentStyle={{
+        paddingTop: 10,
+      }}
       id={COMPONENT_ID}
       className={classes.wrapper}
     >
@@ -41,26 +55,26 @@ export default function Sidebar({
         display={"flex"}
         flexDirection="column"
         style={{
-          rowGap: 20,
+          rowGap: 8,
         }}
       >
-        <Box display="flex" flexDirection="column ">
-          <Typography>Text detection architecture (backbone)</Typography>
-          <Select
+        <Box className={classes.item} display="flex" flexDirection="column ">
+          <Typography>Detection model</Typography>
+          <SelectInput
             value={detConfig}
             onChange={(value) => setDetConfig(value)}
             options={Object.values(DET_CONFIG)}
           />
         </Box>
-        <Box display="flex" flexDirection="column ">
-          <Typography>Text recognition architecture (backbone)</Typography>
-          <Select
+        <Box className={classes.item} display="flex" flexDirection="column ">
+          <Typography>Recognition model</Typography>
+          <SelectInput
             value={recoConfig}
             onChange={(value) => setRecoConfig(value)}
             options={Object.values(RECO_CONFIG)}
           />
         </Box>
-        <Box mt="30px" id="upload-container"></Box>
+        <Box mt="10px" id="upload-container"></Box>
       </Box>
     </Card>
   );
