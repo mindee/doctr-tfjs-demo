@@ -164,7 +164,7 @@ export const getCrops = ({ stage }: { stage: Stage }) => {
       return new Promise((resolve) => {
         stage.toImage({
           ...clientRect,
-          quality: 1,
+          quality: 5,
           pixelRatio: 10,
           callback: (value: HTMLImageElement) => {
             resolve({
@@ -258,10 +258,10 @@ export const transformBoundingBox = (
   let offset =
     (contour.width * contour.height * 1.5) /
     (2 * (contour.width + contour.height));
-  const p1 = clamp(contour.x - offset, size[1]);
-  const p2 = clamp(p1 + contour.width + 2 * offset, size[1]);
-  const p3 = clamp(contour.y - offset, size[0]);
-  const p4 = clamp(p3 + contour.height + 2 * offset, size[0]);
+  const p1 = clamp(contour.x - offset, size[1]) - 1;
+  const p2 = clamp(p1 + contour.width + 2 * offset, size[1]) - 1;
+  const p3 = clamp(contour.y - offset, size[0]) - 1;
+  const p4 = clamp(p3 + contour.height + 2 * offset, size[0]) - 1;
   return {
     id: "_" + Math.random().toString(36).substr(2, 9),
     config: {
