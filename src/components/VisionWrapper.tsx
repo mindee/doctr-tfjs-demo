@@ -24,7 +24,7 @@ import {
 } from "src/utils";
 import { useStateWithRef } from "src/utils/hooks";
 import { flatten } from "underscore";
-import { ModelConfig, UploadedFile, Word } from "../common/types";
+import { UploadedFile, Word } from "../common/types";
 import AnnotationViewer from "./AnnotationViewer";
 import HeatMap from "./HeatMap";
 import ImageViewer from "./ImageViewer";
@@ -34,16 +34,14 @@ import WordsList from "./WordsList";
 const COMPONENT_ID = "VisionWrapper";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: "100%",
-  },
+  wrapper: {},
 }));
 
 export default function VisionWrapper(): JSX.Element {
   const classes = useStyles();
   const [detConfig, setDetConfig] = useState(DET_CONFIG.db_mobilenet_v2);
   const [recoConfig, setRecoConfig] = useState(RECO_CONFIG.crnn_vgg16_bn);
-
+  const [loadingImage, setLoadingImage] = useState(false);
   const recognitionModel = useRef<GraphModel | null>(null);
   const detectionModel = useRef<GraphModel | null>(null);
   const imageObject = useRef<HTMLImageElement>(new Image());
@@ -111,7 +109,6 @@ export default function VisionWrapper(): JSX.Element {
   };
 
   const getWords = async () => {
-    setExtractingWords(true);
     const words = (await extractWords({
       recognitionModel: recognitionModel.current,
       stage: annotationStage.current!,
@@ -122,6 +119,8 @@ export default function VisionWrapper(): JSX.Element {
   };
 
   const loadImage = async (uploadedFile: UploadedFile) => {
+    setLoadingImage(true);
+    setExtractingWords(true);
     imageObject.current.onload = async () => {
       await getHeatMapFromImage({
         heatmapContainer: heatMapContainerObject.current,
@@ -130,6 +129,7 @@ export default function VisionWrapper(): JSX.Element {
         size: [detConfig.height, detConfig.width],
       });
       getBoundingBoxes();
+      setLoadingImage(false);
     };
     imageObject.current.src = uploadedFile?.image as string;
   };
@@ -191,10 +191,10 @@ export default function VisionWrapper(): JSX.Element {
       container
     >
       <Portal container={uploadContainer}>
-        <ImageViewer uploadedImage={imageObject.current} onUpload={onUpload} />
+        <ImageViewer loadingImage={loadingImage} onUpload={onUpload} />
       </Portal>
       <HeatMap heatMapContainerRef={heatMapContainerObject} />
-      <Grid item xs={3}>
+      <Grid item xs={12} md={3}>
         <Sidebar
           detConfig={detConfig}
           setDetConfig={setDetConfig}
@@ -202,8 +202,9 @@ export default function VisionWrapper(): JSX.Element {
           setRecoConfig={setRecoConfig}
         />
       </Grid>
-      <Grid item xs={5}>
+      <Grid xs={12} item md={5}>
         <AnnotationViewer
+          loadingImage={loadingImage}
           setAnnotationStage={setAnnotationStage}
           annotationData={annotationData}
           onShapeMouseEnter={onShapeMouseEnter}
@@ -211,7 +212,7 @@ export default function VisionWrapper(): JSX.Element {
           onShapeClick={onShapeClick}
         />
       </Grid>
-      <Grid item xs={4}>
+      <Grid xs={12} item md={4}>
         <WordsList
           fieldRefsObject={fieldRefsObject.current}
           onFieldMouseLeave={onFieldMouseLeave}

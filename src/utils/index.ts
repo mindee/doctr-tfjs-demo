@@ -62,17 +62,25 @@ export const getImageTensorForRecognitionModel = (
   size: [number, number]
 ) => {
   const list = crops.map((imageObject) => {
-    let h = imageObject.height
-    let w = imageObject.width
-    let resize_target: any
-    let padding_target: any
-    let aspect_ratio = size[1] / size[0]
+    let h = imageObject.height;
+    let w = imageObject.width;
+    let resize_target: any;
+    let padding_target: any;
+    let aspect_ratio = size[1] / size[0];
     if (aspect_ratio * h > w) {
-        resize_target = [size[0], Math.round(size[0] * w / h)];
-        padding_target = [[0, 0], [0, size[1] - Math.round(size[0] * w / h)], [0, 0]];
+      resize_target = [size[0], Math.round((size[0] * w) / h)];
+      padding_target = [
+        [0, 0],
+        [0, size[1] - Math.round((size[0] * w) / h)],
+        [0, 0],
+      ];
     } else {
-        resize_target = [Math.round(size[1] * h / w), size[1]];
-        padding_target = [[0, size[0] - Math.round(size[1] * h / w)], [0, 0], [0, 0]];
+      resize_target = [Math.round((size[1] * h) / w), size[1]];
+      padding_target = [
+        [0, size[0] - Math.round((size[1] * h) / w)],
+        [0, 0],
+        [0, 0],
+      ];
     }
     return browser
       .fromPixels(imageObject)
@@ -253,6 +261,7 @@ function clamp(number: number, size: number) {
 
 export const transformBoundingBox = (
   contour: any,
+  id: number,
   size: [number, number]
 ): AnnotationShape => {
   let offset =
@@ -263,7 +272,7 @@ export const transformBoundingBox = (
   const p3 = clamp(contour.y - offset, size[0]) - 1;
   const p4 = clamp(p3 + contour.height + 2 * offset, size[0]) - 1;
   return {
-    id: "_" + Math.random().toString(36).substr(2, 9),
+    id,
     config: {
       stroke: randomColor(),
     },
@@ -297,7 +306,7 @@ export const extractBoundingBoxesFromHeatmap = (size: [number, number]) => {
   for (let i = 0; i < contours.size(); ++i) {
     const contourBoundingBox = cv.boundingRect(contours.get(i));
     if (contourBoundingBox.width > 2 && contourBoundingBox.height > 2) {
-      boundingBoxes.push(transformBoundingBox(contourBoundingBox, size));
+      boundingBoxes.unshift(transformBoundingBox(contourBoundingBox, i, size));
     }
   }
   src.delete();

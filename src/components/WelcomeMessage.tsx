@@ -1,16 +1,20 @@
 import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
-import { COLORS } from "@mindee/web-elements.assets";
+import { COLORS, FONTS } from "@mindee/web-elements.assets";
 import { Card } from "@mindee/web-elements.ui.card";
 import doctrIcon from "../assets/doctr.svg";
 const COMPONENT_ID = "WelcomeMessage";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   link: {
     color: COLORS.blue,
     textDecoration: "underline",
+  },
+  icon: {
+    width: 28,
+    marginBottom: 4,
   },
 }));
 
@@ -27,12 +31,14 @@ export default function WelcomeMessage(): JSX.Element {
       className={classes.wrapper}
     >
       <Box style={{ columnGap: 10 }} display="flex" alignItems="center">
-        <img alt="logo" src={doctrIcon} />
-        <Typography variant="h2">
+        <img className={classes.icon} alt="logo" src={doctrIcon} />
+        <Typography style={{ fontSize: 22 }} variant="h2">
           Welcome to the docTR by mindee live demo page
         </Typography>
       </Box>
-      <Typography style={{ lineHeight: 2 }} variant="subtitle1">
+      <Typography
+        style={{ lineHeight: 2, fontFamily: FONTS.regular, fontSize: 16 }}
+      >
         Upload an image and select models out{" "}
         <a
           target="_blank"

@@ -7,7 +7,9 @@ import twitterIcon from "../assets/twitter.svg";
 const COMPONENT_ID = "PageFooter";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {},
+  wrapper: {
+    rowGap: 20,
+  },
   text: {
     fontSize: 14,
   },
@@ -22,7 +24,8 @@ export default function PageFooter(): JSX.Element {
       height="80px"
       className={classes.wrapper}
       display="flex"
-      py="27px"
+      py="40px"
+      flexWrap="wrap"
     >
       <Typography variant="caption" className={classes.text}>
         Copyright 2021 Mindee. All rights reserved{" "}

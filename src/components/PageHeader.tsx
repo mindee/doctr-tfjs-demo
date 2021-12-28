@@ -24,7 +24,11 @@ export default function PageHeader(): JSX.Element {
       display="flex"
       py="26px"
       px="58px"
-      mb="10px"
+      component="a"
+      // @ts-ignore
+      href="https://mindee.com"
+      // @ts-ignore
+      target="_blank"
     >
       <img className={classes.logo} src={logo} />
     </Box>

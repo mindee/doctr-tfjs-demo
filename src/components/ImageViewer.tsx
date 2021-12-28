@@ -9,6 +9,7 @@ import { UploadedFile } from "../common/types";
 
 import placeholder from "../assets/image-placeholder.svg";
 import { FONTS } from "@mindee/web-elements.assets";
+import { Spinner } from "@mindee/web-elements.ui.spinner";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -28,13 +29,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  uploadedImage: any;
+  loadingImage: boolean;
   onUpload: (file: UploadedFile) => void;
 }
 
 export default function ImageViewer({
   onUpload,
-  uploadedImage,
+  loadingImage,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
@@ -44,14 +45,14 @@ export default function ImageViewer({
         paragraph
         variant="subtitle1"
       >
-        2 Upload and image
+        2 - Upload an image
       </Typography>
       <Uploader
-        style={{ height: "250px", justifyContent: "center" }}
+        style={{ height: "225px", justifyContent: "center" }}
         onUpload={onUpload}
       >
-        {uploadedImage.width ? (
-          <img alt="viewer" className={classes.image} src={uploadedImage.src} />
+        {loadingImage ? (
+          <Spinner />
         ) : (
           <Box
             border="1px solid #E6E9EC"
@@ -70,7 +71,7 @@ export default function ImageViewer({
             />
             <Typography align="center" style={{ fontSize: 15 }} variant="body2">
               Upload an image <br />
-              (.jpg, png, jpeg, .bmp)
+              (.jpg, .png, .webp)
             </Typography>
           </Box>
         )}

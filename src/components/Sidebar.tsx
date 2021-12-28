@@ -14,7 +14,9 @@ import { FONTS } from "@mindee/web-elements.assets";
 const COMPONENT_ID = "Sidebar";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {},
+  wrapper: {
+    height: "100%",
+  },
   item: {
     rowGap: 5,
   },
@@ -42,7 +44,7 @@ export default function Sidebar({
           paragraph
           variant="subtitle1"
         >
-          1 Select a Model
+          1 - Select a Model
         </Typography>
       }
       contentStyle={{
