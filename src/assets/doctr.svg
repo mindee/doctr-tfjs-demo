@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="133px" height="133px" viewBox="0 0 133 133" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Ico_docTR</title>
+    <g id="DocTR" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD-Copy-2" transform="translate(-894.000000, -499.000000)" fill="#FD3246">
+            <g id="Ico_docTR" transform="translate(894.000000, 499.000000)">
+                <rect id="Rectangle" x="57" y="38" width="19" height="19"></rect>
+                <rect id="Rectangle-Copy-2" x="38" y="57" width="19" height="19"></rect>
+                <rect id="Rectangle-Copy-3" x="57" y="76" width="19" height="19"></rect>
+                <rect id="Rectangle-Copy-4" x="76" y="57" width="19" height="19"></rect>
+                <path d="M57,0 L57,19 L19,19 L19,57 L3.55271368e-15,57 L0,5.8170723e-16 L57,0 Z" id="Combined-Shape"></path>
+                <path d="M57,76 L57,95 L19,95 L19,133 L3.55271368e-15,133 L0,76 L57,76 Z" id="Combined-Shape-Copy-2" transform="translate(28.500000, 104.500000) scale(1, -1) translate(-28.500000, -104.500000) "></path>
+                <path d="M133,0 L133,19 L95,19 L95,57 L76,57 L76,5.8170723e-16 L133,0 Z" id="Combined-Shape-Copy" transform="translate(104.500000, 28.500000) scale(-1, 1) translate(-104.500000, -28.500000) "></path>
+                <path d="M133,76 L133,95 L95,95 L95,133 L76,133 L76,76 L133,76 Z" id="Combined-Shape-Copy-3" transform="translate(104.500000, 104.500000) scale(-1, -1) translate(-104.500000, -104.500000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

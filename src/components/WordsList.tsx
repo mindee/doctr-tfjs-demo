@@ -5,6 +5,7 @@
 
 import React from "react";
 import {
+  Box,
   CircularProgress,
   Grid,
   makeStyles,
@@ -13,20 +14,23 @@ import {
 } from "@material-ui/core";
 import { Card } from "@mindee/web-elements.ui.card";
 import { Word } from "src/common/types";
+import { COLORS, FONTS } from "@mindee/web-elements.assets";
 
 const COMPONENT_ID = "WordsList";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    height: "45vh",
+    height: "100%",
   },
   list: {
     overflow: "hidden auto",
-    height: "35vh",
+    height: "465px",
+    width: "100%",
   },
   item: {
+    width: "100%",
+    padding: 20,
     cursor: "pointer",
-    padding: 5,
     borderBottom: `1px solid ${theme.palette.grey[100]}`,
     borderLeft: "3px solid transparent",
     "&:hover": {
@@ -55,11 +59,41 @@ export default function WordsList({
   const classes = useStyles();
   return (
     <Card
-      header={`Words values ${words.length ? `(${words.length})` : ""}`}
+      topBar
+      header={
+        <Box display="flex" flexDirection="column">
+          <Typography
+            style={{ fontFamily: FONTS.bold }}
+            paragraph
+            variant="subtitle1"
+          >
+            4 - Visualize word values
+          </Typography>
+          <Typography style={{ fontSize: 14, marginTop: -5 }} variant="caption">
+            {words.length ? `${words.length}  words identified` : ""}
+          </Typography>
+        </Box>
+      }
+      contentStyle={{
+        paddingTop: 20,
+      }}
       id={COMPONENT_ID}
       className={classes.wrapper}
     >
-      <Grid spacing={3} container id={COMPONENT_ID} className={classes.list}>
+      <Grid container id={COMPONENT_ID} className={classes.list}>
+        {!extractingWords && !words.length && (
+          <Box
+            height="100%"
+            width="100%"
+            borderRadius="4px"
+            border={`1px solid ${COLORS.border}`}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Typography variant="body2">No image uploaded yet</Typography>
+          </Box>
+        )}
         {extractingWords ? (
           <CircularProgress className={classes.loader} />
         ) : (

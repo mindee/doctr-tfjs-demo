@@ -3,59 +3,79 @@
 // This program is licensed under the Apache License version 2.
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0.txt> for full license details.
 
-import { Box, colors, makeStyles, Theme } from "@material-ui/core";
+import { Box, makeStyles, Theme, Typography } from "@material-ui/core";
 import Uploader from "./Uploader";
 import { UploadedFile } from "../common/types";
-import { Card } from "@mindee/web-elements.ui.card";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+
+import placeholder from "../assets/image-placeholder.svg";
+import { FONTS } from "@mindee/web-elements.assets";
+import { Spinner } from "@mindee/web-elements.ui.spinner";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {},
-  image: {
+  wrapper: {
     height: "100%",
+  },
+  image: {
+    height: 200,
     width: "100%",
     objectFit: "contain",
   },
   placeholder: {
-    border: `1px solid ${theme.palette.grey[200]}`,
-    height: 200,
-    width: "100%",
+    height: 100,
     borderRadius: 8,
+    objectFit: "contain",
     cursor: "pointer",
   },
 }));
 
 interface Props {
-  uploadedImage: string;
+  loadingImage: boolean;
   onUpload: (file: UploadedFile) => void;
 }
 
 export default function ImageViewer({
   onUpload,
-  uploadedImage,
+  loadingImage,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
-    <Card header="Input image" className={classes.wrapper}>
-      <Uploader style={{ height: "35vh" }} onUpload={onUpload}>
-        {uploadedImage ? (
-          <img alt="viewer" className={classes.image} src={uploadedImage} />
+    <Box className={classes.wrapper}>
+      <Typography
+        style={{ fontFamily: FONTS.bold, marginBottom: 20 }}
+        paragraph
+        variant="subtitle1"
+      >
+        2 - Upload an image
+      </Typography>
+      <Uploader
+        style={{ height: "225px", justifyContent: "center" }}
+        onUpload={onUpload}
+      >
+        {loadingImage ? (
+          <Spinner />
         ) : (
           <Box
-            display="flex"
-            alignItems="center"
+            border="1px solid #E6E9EC"
+            borderRadius="4px"
             justifyContent="center"
-            className={classes.placeholder}
+            display="flex"
+            width="100%"
+            alignItems="center"
+            flexDirection="column"
+            style={{ rowGap: 10 }}
           >
-            <FontAwesomeIcon
-              color={colors.grey[300]}
-              size="6x"
-              icon={faUpload}
+            <img
+              alt="placeholder"
+              src={placeholder}
+              className={classes.placeholder}
             />
+            <Typography align="center" style={{ fontSize: 15 }} variant="body2">
+              Upload an image <br />
+              (.jpg, .png, .webp)
+            </Typography>
           </Box>
         )}
       </Uploader>
-    </Card>
+    </Box>
   );
 }

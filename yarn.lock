@@ -1576,7 +1576,7 @@
     prop-types "^15.7.2"
     react-is "^16.8.0 || ^17.0.0"
 
-"@mindee/web-elements.assets@0.0.22":
+"@mindee/web-elements.assets@0.0.22", "@mindee/web-elements.assets@^0.0.22":
   version "0.0.22"
   resolved "https://node.bit.dev/@mindee/web-elements.assets/-/@mindee-web-elements.assets-0.0.22.tgz#3564c8e16fe36a46f0a261bb5525b25dfe743846"
   integrity sha1-NWTI4W/jakbwomG7VSWyXf50OEY=
@@ -1591,12 +1591,36 @@
     classnames "2.3.1"
     core-js "^3.0.0"
 
+"@mindee/web-elements.ui.select-input@^0.0.26":
+  version "0.0.26"
+  resolved "https://node.bit.dev/@mindee/web-elements.ui.select-input/-/@mindee-web-elements.ui.select-input-0.0.26.tgz#6d6bc1b03a2171ffe35602205e2aafc6f2849700"
+  integrity sha1-bWvBsDohcf/jVgIgXiqvxvKElwA=
+  dependencies:
+    "@mindee/web-elements.assets" "0.0.22"
+    classnames "2.3.1"
+    core-js "^3.0.0"
+    react-select "4.3.1"
+
+"@mindee/web-elements.ui.spinner@^0.0.16":
+  version "0.0.16"
+  resolved "https://node.bit.dev/@mindee/web-elements.ui.spinner/-/@mindee-web-elements.ui.spinner-0.0.16.tgz#35d4730bc8dfbc6d3c195d6515179d7cfbff9ea4"
+  integrity sha1-NdRzC8jfvG08GV1lFRedfPv/nqQ=
+  dependencies:
+    core-js "^3.0.0"
+
 "@mindee/web-elements.ui.theme-wrapper@^0.0.21":
   version "0.0.21"
   resolved "https://node.bit.dev/@mindee/web-elements.ui.theme-wrapper/-/@mindee-web-elements.ui.theme-wrapper-0.0.21.tgz#faf507b505dfd421af1234b89d0ed29aaff39f2f"
   integrity sha1-+vUHtQXf1CGvEjS4nQ7Smq/zny8=
   dependencies:
     "@mindee/web-elements.assets" "0.0.22"
+    core-js "^3.0.0"
+
+"@mindee/web-elements.ui.typography@^0.0.22":
+  version "0.0.22"
+  resolved "https://node.bit.dev/@mindee/web-elements.ui.typography/-/@mindee-web-elements.ui.typography-0.0.22.tgz#d848c8ef8168bf2ceeffc2ec5b4fe75f0a0c2b98"
+  integrity sha1-2EjI74Fovyzu/8LsW0/nXwoMK5g=
+  dependencies:
     core-js "^3.0.0"
 
 "@nodelib/fs.scandir@2.1.4":
@@ -9591,7 +9615,7 @@ prompts@2.4.0, prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -9812,6 +9836,13 @@ react-dev-utils@^11.0.3:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
+react-device-detect@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-2.1.2.tgz#60abb6fa361ec4cc839469a0c4c3e9b8ea17d6b5"
+  integrity sha512-N42xttwez3ECgu4KpOL2ICesdfoz8NCBfmc1rH9FRYSjH7NmMyANPSrQ3EvAtJyj/6TzJNhrANSO38iXjCB2Ug==
+  dependencies:
+    ua-parser-js "^0.7.30"
+
 react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
@@ -9834,6 +9865,13 @@ react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
+
+react-input-autosize@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-3.0.0.tgz#6b5898c790d4478d69420b55441fcc31d5c50a85"
+  integrity sha512-nL9uS7jEs/zu8sqwFE5MAPx6pPkNAriACQ2rGLlqmKr2sPGtN7TXTyDdQt4lbNXVx7Uzadb40x8qotIuru6Rhg==
+  dependencies:
+    prop-types "^15.5.8"
 
 react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
@@ -9929,6 +9967,19 @@ react-scripts@4.0.3:
     workbox-webpack-plugin "5.1.4"
   optionalDependencies:
     fsevents "^2.1.3"
+
+react-select@4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-4.3.1.tgz#389fc07c9bc7cf7d3c377b7a05ea18cd7399cb81"
+  integrity sha512-HBBd0dYwkF5aZk1zP81Wx5UsLIIT2lSvAY2JiJo199LjoLHoivjn9//KsmvQMEFGNhe58xyuOITjfxKCcGc62Q==
+  dependencies:
+    "@babel/runtime" "^7.12.0"
+    "@emotion/cache" "^11.4.0"
+    "@emotion/react" "^11.1.1"
+    memoize-one "^5.0.0"
+    prop-types "^15.6.0"
+    react-input-autosize "^3.0.0"
+    react-transition-group "^4.3.0"
 
 react-select@^5.2.1:
   version "5.2.1"
@@ -11660,6 +11711,11 @@ typescript@^4.1.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.2.tgz#6d618640d430e3569a1dfb44f7d7e600ced3ee86"
   integrity sha512-gzP+t5W4hdy4c+68bfcv0t400HVJMMd2+H9B7gae1nQlBzCqvrXX+6GL/b3GAgyTH966pzrZ70/fRjwAtZksSQ==
+
+ua-parser-js@^0.7.30:
+  version "0.7.31"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.31.tgz#649a656b191dffab4f21d5e053e27ca17cbff5c6"
+  integrity sha512-qLK/Xe9E2uzmYI3qLeOmI0tEOt+TBBQyUIAh4aAgU05FVYzeZrKUdkAZfBNVGRaHVgV0TDkdEngJSw/SyQchkQ==
 
 underscore@^1.13.1:
   version "1.13.1"
