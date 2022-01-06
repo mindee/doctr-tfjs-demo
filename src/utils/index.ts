@@ -265,7 +265,7 @@ export const transformBoundingBox = (
   size: [number, number]
 ): AnnotationShape => {
   let offset =
-    (contour.width * contour.height * 1.5) /
+    (contour.width * contour.height * 1.8) /
     (2 * (contour.width + contour.height));
   const p1 = clamp(contour.x - offset, size[1]) - 1;
   const p2 = clamp(p1 + contour.width + 2 * offset, size[1]) - 1;
