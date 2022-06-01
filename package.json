@@ -38,7 +38,7 @@
     "react-mindee-js": "^1.3.2-rc.1",
     "react-scripts": "4.0.3",
     "react-select": "^5.2.1",
-    "sharp": "^0.29.3",
+    "sharp": "^0.30.5",
     "typescript": "^4.1.2",
     "underscore": "^1.13.1",
     "web-vitals": "^1.0.1"
