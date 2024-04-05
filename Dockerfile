@@ -3,7 +3,7 @@ FROM node:12-alpine
 WORKDIR /usr/src/app
 
 RUN set -eux \
-    && npm install -g serve
+    && npm install -g serve@13.0.2
 
 COPY ./package.json ./
 COPY ./yarn.lock ./
